@@ -1,9 +1,11 @@
 import os
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import Shoes
+from models import db
 
+# Activating virtual environment:
+# source env/bin/activate
 
 # ~~~ HOW TO FLASK ~~~
 # Flask Database Migration commands:
@@ -29,10 +31,8 @@ app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
-
-
 
 @app.route('/')
 def hello():
