@@ -1,10 +1,10 @@
 # HypeBeastHelper
 
-~~~ HOW TO VIRTUALENV ~~~
+## HOW TO VIRTUALENV
 Activating virtual environment:
 `source env/bin/activate`
 
-~~~ HOW TO FLASK ~~~
+## HOW TO FLASK
 Flask Database Migration commands:
 1. `flask db init`
 2. `flask db migrate`
@@ -16,9 +16,9 @@ When database models change:
 
 Refer this link for more info: https://realpython.com/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/
 
-~~~ HOW TO POSTGRESQL CLI ~~~
-`\du`: list of roles
-`\l`: list of databases
-`\c hypebeast`: connects with a database
-`\dt`: list of relations
-`\d shoes`: shows table schema
+## HOW TO POSTGRESQL CLI
+- `\du`: list of roles
+- `\l`: list of databases
+- `\c hypebeast`: connects with a database
+- `\dt`: list of relations
+- `\d shoes`: shows table schema
