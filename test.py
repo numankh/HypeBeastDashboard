@@ -20,7 +20,7 @@ def scraper(row):
 
     # Scrape individual item pages
     itemUrl = row.find('a', attrs = {'class':'s-item__link'}).get('href')
-    itemPageSoup = BeautifulSoup(requests.get(itemUrl).content, 'html5lib')
+    itemPageSoup = BeautifulSoup(requests.get(itemUrl).content, 'html.parser')
 
     # Obtain the number of images the seller has provided
     numberOfItemImgs = 1 # Featured image counts as 1
@@ -55,12 +55,12 @@ def scraper(row):
     rows.append(itemData)
 
 def main():
-    for ebayPageNumber in range(1,2):
+    for ebayPageNumber in range(1,3):
     
         URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=chocolate+milk+social+status+dunk&_sacat=0&rt=nc&LH_ItemCondition=1000&_pgn={ebayPageNumber}"
         r = requests.get(URL)
         
-        soup = BeautifulSoup(r.content, 'html5lib')
+        soup = BeautifulSoup(r.content, 'html.parser')
 
         quotes=[]  # a list to store quotes
         
@@ -70,11 +70,11 @@ def main():
             print(f"Error with page number {ebayPageNumber} and item {totalItems}")
             continue
 
-        for row in table.findAll('li', attrs = {'class':'s-item s-item__sep-on-bottom s-item--watch-at-corner'}):
+        for row in table.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'}):
             scraper(row)
 
-        for row in table.findAll('li', attrs = {'class':'s-item s-item--watch-at-corner'}):
-            scraper(row)
+        # for row in table.findAll('li', attrs = {'class':'s-item s-item--watch-at-corner'}):
+        #     scraper(row)
 
         exportToCsv()
 
