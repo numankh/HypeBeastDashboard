@@ -5,7 +5,7 @@ import csv
 rows = []
 
 def exportToCsv():
-    fieldnames = ['item_name', 'item_price', 'free_shipping', 'number_of_images', 'seller_rating', 'item_url']
+    fieldnames = ['item_name', 'item_price', 'free_shipping', 'shoe_size', 'number_of_images', 'seller_rating', 'item_url']
 
     with open('ebayItems.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -36,18 +36,33 @@ def scraper(row):
     # itemDescription = itemPageSoup.find('iframe', attrs = {'id':'desc_ifr'})
     # print(itemDescription)
 
+    # Obtain item size
+    shoeSize = ""
+    itemSpecificsSection = itemPageSoup.find('div', attrs = {'class':'ux-layout-section-module'})
+    itemSpecificsSectionRow = itemSpecificsSection.findAll('div', attrs = {'class':'ux-layout-section__row'})
+    for x in itemSpecificsSectionRow:
+        vals = [i.text for i in x.findAll('span')]
+        print(vals)
+        for t in range(0,len(vals)):
+            if "US Shoe Size" in vals[t]:
+                shoeSize = vals[t+1]
+                break
+
+
     print(itemTitle.text)
     print(itemPrice.text)
     print(f"Free shipping: {itemShipping}")
     print(itemUrl)
     print(f"Number of item images: {numberOfItemImgs}")
     print(f"Seller rating: {sellerRating}")
+    print(f"Shoe size: {shoeSize}")
     print("=====================")
 
     itemData = {
         "item_name": itemTitle.text,
         "item_price": itemPrice.text,
         "free_shipping": itemShipping,
+        "shoe_size": shoeSize,
         "number_of_images": numberOfItemImgs,
         "seller_rating": sellerRating,
         "item_url": itemUrl
@@ -67,7 +82,7 @@ def main():
         table = soup.find('ul', attrs = {'class':'srp-results srp-grid clearfix'}) 
         
         if not table:
-            print(f"Error with page number {ebayPageNumber} and item {totalItems}")
+            print(f"Error with page number {ebayPageNumber}")
             continue
 
         for row in table.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'}):
