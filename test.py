@@ -154,6 +154,7 @@ def scraper(row):
 
     # Get item price
     itemPrice = row.find('span', attrs = {'class': 's-item__price'}).text
+    itemPrice = float(itemPrice[1:])
 
     # Get item shipping
     itemShipping = row.find('span', attrs = {'class': 's-item__shipping s-item__logisticsCost'})

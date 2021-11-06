@@ -27,7 +27,7 @@ class Shoe(db.Model):
     name = db.Column(db.String())
     price = db.Column(db.Float())
     free_shipping = db.Column(db.Boolean())
-    shoe_size = db.Column(db.Integer())
+    shoe_size = db.Column(db.Float())
     total_images = db.Column(db.Integer())
     seller_rating = db.Column(db.Integer())
     adult_shoe = db.Column(db.Boolean())
@@ -35,9 +35,11 @@ class Shoe(db.Model):
     child_shoe = db.Column(db.Boolean())
     url = db.Column(db.String())
     model = db.Column(db.String())
+    sold = db.Column(db.Boolean())
 
     def __init__(self, name, price, free_shipping, shoe_size, total_images,
-                    seller_rating, adult_shoe, youth_shoe, child_shoe, url, model):
+                    seller_rating, adult_shoe, youth_shoe, child_shoe, url,
+                    model, sold):
         self.name = name
         self.price = price
         self.free_shipping = free_shipping
@@ -49,6 +51,7 @@ class Shoe(db.Model):
         self.child_shoe = child_shoe
         self.url = url
         self.model = model
+        self.sold = sold
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -59,14 +62,15 @@ class Shoe(db.Model):
             'name': self.name,
             'price': self.price,
             'free_shipping': self.free_shipping,
-            'total_images': self.total_images,
+            'shoe_size': self.shoe_size,
             'total_images': self.total_images,
             'seller_rating': self.seller_rating,
             'adult_shoe': self.adult_shoe,
             'youth_shoe': self.youth_shoe,
             'child_shoe': self.child_shoe,
             'url': self.url,
-            'model': self.model
+            'model': self.model,
+            'sold': self.sold
         }
 
 """
@@ -119,23 +123,13 @@ def add_shoe():
 
 @app.route("/addAll")
 def add_all():
-
+    temp = testingMain()
     test_list = []
-    for x in range(1,5):
-        test_list.append(Shoe(name='test5', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-                seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model"))
-
-    # test_list = [
-    #         Shoe(name='test1', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model"),
-    #         Shoe(name='test2', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model"),
-    #         Shoe(name='test3', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model")
-    #     ]
-    # for x in test_list:
-    #     print(x)
-
+    for record in temp:
+        test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
+                shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
+                adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
+                url=record["item_url"], model="Nike Dunk Low x Social Status", sold=False))
     try:
         db.session.add_all(test_list)
         db.session.commit()
@@ -148,22 +142,6 @@ def scrape():
     temp = testingMain()
     print(temp)
     return "Scrape success!"
-
-    # try:
-    #     db.session.add_all([
-    #         Shoe(name='test1', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model"),
-    #         Shoe(name='test2', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model"),
-    #         Shoe(name='test3', price=12.34, free_shipping=True, shoe_size=5, total_images=10,
-    #             seller_rating=20, adult_shoe=True, youth_shoe=False, child_shoe=False, url="test-url", model="test-model")
-    #     ])
-    #     db.session.commit()
-    #     return "Bunch of shoes added!"
-    # except Exception as e:
-    #     return(str(e))
-
-
 
 @app.route("/getall")
 def get_all():
