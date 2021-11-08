@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 # from models import db
 import os
-from test import testingMain
+from ebayScraper import ebayScraperMain
 
 
 """
@@ -121,9 +121,9 @@ def add_shoe():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/addAll")
-def add_all():
-    temp = testingMain()
+@app.route("/scrapeAndStore")
+def scrape_and_store():
+    temp = ebayScraperMain()
     test_list = []
     for record in temp:
         test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
@@ -137,9 +137,26 @@ def add_all():
     except Exception as e:
         return(str(e))
 
-@app.route("/scrape")
+@app.route("/scrapeAndStoreTest")
+def scrape_and_store_test():
+    scraperResults = ebayScraperMain()
+    for record in scraperResults:
+        try:
+            shoe = Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
+                    shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
+                    adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
+                    url=record["item_url"], model="Nike Dunk Low x Social Status", sold=False)
+            db.session.add(shoe)
+            db.session.commit()
+            print("Shoe added. shoe id={}".format(shoe.id))
+        except Exception as e:
+            print(str(e))
+            pass
+    return "Bunch of shoes added!"
+
+@app.route("/scrapeTest")
 def scrape():
-    temp = testingMain()
+    temp = ebayScraperMain()
     print(temp)
     return "Scrape success!"
 
