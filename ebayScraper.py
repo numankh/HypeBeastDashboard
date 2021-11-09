@@ -6,6 +6,8 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 import os
+import urllib.request
+from utils.cleaning import cleanString
 
 rows = []
 
@@ -108,8 +110,11 @@ def scrapeItemPage(item):
         pass
 
     # Obtain item description
-    # itemDescription = itemPageSoup.find('iframe', attrs = {'id':'desc_ifr'})
-    # print(itemDescription)
+    iframe = itemPageSoup.find('iframe', attrs = {'id':'desc_ifr'})
+    response = urllib.request.urlopen(iframe.attrs['src'])
+    iframe_soup = BeautifulSoup(response, 'html.parser')
+    raw_item_description = iframe_soup.find('div', attrs = {'id':'ds_div'}).text
+    item_description = cleanString(raw_item_description)
 
     # Obtain item size
     shoeSize = ""
@@ -153,9 +158,10 @@ def scrapeItemPage(item):
         "item_name": itemTitle,
         "item_price": itemPrice,
         "free_shipping": itemShipping,
-        "shoe_size": shoeSize,
         "number_of_images": numberOfItemImgs,
         "seller_rating": sellerRating,
+        "item_description": item_description,
+        "shoe_size": shoeSize,
         "adult_shoe": adult_shoe,
         "youth_shoe": youth_shoe,
         "child_shoe": child_shoe,

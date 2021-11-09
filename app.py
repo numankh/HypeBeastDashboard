@@ -27,9 +27,10 @@ class Shoe(db.Model):
     name = db.Column(db.String())
     price = db.Column(db.Float())
     free_shipping = db.Column(db.Boolean())
-    shoe_size = db.Column(db.Float())
     total_images = db.Column(db.Integer())
     seller_rating = db.Column(db.Integer())
+    item_description = db.Column(db.String())
+    shoe_size = db.Column(db.Float())
     adult_shoe = db.Column(db.Boolean())
     youth_shoe = db.Column(db.Boolean())
     child_shoe = db.Column(db.Boolean())
@@ -37,15 +38,16 @@ class Shoe(db.Model):
     model = db.Column(db.String())
     sold = db.Column(db.Boolean())
 
-    def __init__(self, name, price, free_shipping, shoe_size, total_images,
-                    seller_rating, adult_shoe, youth_shoe, child_shoe, url,
-                    model, sold):
+    def __init__(self, name, price, free_shipping, item_description, total_images,
+                    seller_rating, shoe_size, adult_shoe, youth_shoe, child_shoe,
+                    url, model, sold):
         self.name = name
         self.price = price
         self.free_shipping = free_shipping
-        self.shoe_size = shoe_size
+        self.item_description = item_description
         self.total_images = total_images
         self.seller_rating = seller_rating
+        self.shoe_size = shoe_size
         self.adult_shoe = adult_shoe
         self.youth_shoe = youth_shoe
         self.child_shoe = child_shoe
@@ -61,10 +63,11 @@ class Shoe(db.Model):
             'id': self.id, 
             'name': self.name,
             'price': self.price,
+            'item_description': self.item_description,
             'free_shipping': self.free_shipping,
-            'shoe_size': self.shoe_size,
             'total_images': self.total_images,
             'seller_rating': self.seller_rating,
+            'shoe_size': self.shoe_size,
             'adult_shoe': self.adult_shoe,
             'youth_shoe': self.youth_shoe,
             'child_shoe': self.child_shoe,
@@ -129,7 +132,8 @@ def scrape_and_store():
         test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
                 shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
                 adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
-                url=record["item_url"], model="Nike Dunk Low x Social Status", sold=False))
+                url=record["item_url"], item_description=record["item_description"], 
+                model="Nike Dunk Low x Social Status", sold=False))
     try:
         db.session.add_all(test_list)
         db.session.commit()
