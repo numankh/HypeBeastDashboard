@@ -56,6 +56,13 @@ def scrapeItemPage(item):
         print(f"Error with obtaining item title for <{item}>")
         pass
 
+    # Get item url
+    try:
+        itemUrl = item.find('a', attrs = {'class':'s-item__link'}).get('href')
+    except Exception as e:
+        print(f"Error with obtaining item page url for <{item}>")
+        pass
+
     # Clean item title 
     finalItemTitle = ""
     pattern = r'[^A-Za-z]+'
@@ -70,24 +77,35 @@ def scrapeItemPage(item):
     try:
         itemPrice = item.find('span', attrs = {'class': 's-item__price'}).text
     except Exception as e:
-        print(f"Error with obtaining item price for <{item}>")
+        print(f"Error with obtaining item price, check url: <{itemUrl}>")
         pass
     itemPrice = float(itemPrice[1:])
 
-    # Get item shipping
+    # Get item shipping info
     try:
         itemShipping = item.find('span', attrs = {'class': 's-item__shipping s-item__logisticsCost'})
-    except Exception as e:
-        print(f"Error with obtaining item shipping details for <{item}>")
-        pass
-    itemShipping = True if itemShipping.text == "Free shipping" else False
+        itemShipping = True if itemShipping.text == "Free shipping" else False
+    except:
+        print(f"Error with obtaining item shipping details, check url: <{itemUrl}>")
+        itemShipping = False
+
+    # Get item offer and place bid info
+    try:
+        itemOffer = item.find('span', attrs = {'class': 's-item__purchase-options s-item__purchaseOptions'})
+        itemOffer = True if itemOffer.text == "or Best Offer" else False
+    except:
+        # print(f"Error with obtaining item offer details, check url: <{itemUrl}>")
+        itemOffer = False
+
+    # Get item bid info
+    try:
+        itemBid = item.find('span', attrs = {'class': 's-item__bids s-item__bidCount'})
+        itemBid = True if "bid" in itemBid.text else False
+    except:
+        # print(f"Error with obtaining item bid details, check url: <{itemUrl}>")
+        itemBid = False
 
     # Scrape individual item pages
-    try:
-        itemUrl = item.find('a', attrs = {'class':'s-item__link'}).get('href')
-    except Exception as e:
-        print(f"Error with obtaining item page url for <{item}>")
-        pass
     itemPageSoup = BeautifulSoup(requests.get(itemUrl).content, 'html.parser')
 
     # Obtain the number of images the seller has provided
@@ -106,7 +124,7 @@ def scrapeItemPage(item):
         sellerRating = itemPageSoup.find('span', attrs = {'class':'mbg-l'}).find('a').text
         print(sellerRating)
     except Exception as e:
-        print(f"Error with obtaining seller's rating for <{item}> on item page")
+        print(f"Error with obtaining seller's rating on item page, check url: <{itemUrl}>")
         pass
 
     # Obtain item description
@@ -121,7 +139,7 @@ def scrapeItemPage(item):
     try:
         itemSpecificsSection = itemPageSoup.find('div', attrs = {'class':'ux-layout-section-module'}).findAll('div', attrs = {'class':'ux-layout-section__row'})
     except Exception as e:
-        print(f"Error with obtaining shoe size for <{item}> on item page")
+        print(f"Error with obtaining shoe size on item page, check url: <{itemUrl}>")
         pass
     for x in itemSpecificsSection:
         vals = [i.text for i in x.findAll('span')]
@@ -153,11 +171,14 @@ def scrapeItemPage(item):
     if (not shoeSize.isdigit() and not isFloat(shoeSize)):
         shoeSize = shoeSizeOverride(rawItemTitle)
 
+    print("===========================")
     # Store fields in a dictionary
     itemData = {
         "item_name": itemTitle,
         "item_price": itemPrice,
         "free_shipping": itemShipping,
+        "item_offer_info": itemOffer,
+        "item_bid_info": itemBid,
         "number_of_images": numberOfItemImgs,
         "seller_rating": sellerRating,
         "item_description": item_description,

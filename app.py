@@ -27,6 +27,8 @@ class Shoe(db.Model):
     name = db.Column(db.String())
     price = db.Column(db.Float())
     free_shipping = db.Column(db.Boolean())
+    item_offer_info = db.Column(db.Boolean())
+    item_bid_info = db.Column(db.Boolean())
     total_images = db.Column(db.Integer())
     seller_rating = db.Column(db.Integer())
     item_description = db.Column(db.String())
@@ -40,10 +42,12 @@ class Shoe(db.Model):
 
     def __init__(self, name, price, free_shipping, item_description, total_images,
                     seller_rating, shoe_size, adult_shoe, youth_shoe, child_shoe,
-                    url, model, sold):
+                    url, model, sold, item_offer_info, item_bid_info):
         self.name = name
         self.price = price
         self.free_shipping = free_shipping
+        self.item_offer_info = item_offer_info
+        self.item_bid_info = item_bid_info
         self.item_description = item_description
         self.total_images = total_images
         self.seller_rating = seller_rating
@@ -65,6 +69,8 @@ class Shoe(db.Model):
             'price': self.price,
             'item_description': self.item_description,
             'free_shipping': self.free_shipping,
+            'item_offer_info': self.item_offer_info,
+            'item_bid_info': self.item_bid_info,
             'total_images': self.total_images,
             'seller_rating': self.seller_rating,
             'shoe_size': self.shoe_size,
@@ -132,8 +138,8 @@ def scrape_and_store():
         test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
                 shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
                 adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
-                url=record["item_url"], item_description=record["item_description"], 
-                model="Nike Dunk Low x Social Status", sold=False))
+                url=record["item_url"], item_description=record["item_description"], model="Nike Dunk Low x Social Status",
+                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"]))
     try:
         db.session.add_all(test_list)
         db.session.commit()
@@ -147,9 +153,10 @@ def scrape_and_store_test():
     for record in scraperResults:
         try:
             shoe = Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
-                    shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
-                    adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
-                    url=record["item_url"], model="Nike Dunk Low x Social Status", sold=False)
+                shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
+                adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
+                url=record["item_url"], item_description=record["item_description"], model="Nike Dunk Low x Social Status",
+                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"])
             db.session.add(shoe)
             db.session.commit()
             print("Shoe added. shoe id={}".format(shoe.id))
@@ -172,10 +179,10 @@ def get_all():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/get/<id_>")
-def get_by_id(id_):
+@app.route("/get/<_id>")
+def get_by_id(_id):
     try:
-        shoe=Shoe.query.filter_by(id=id_).first()
+        shoe=Shoe.query.filter_by(id=_id).first()
         return jsonify(shoe.serialize())
     except Exception as e:
 	    return(str(e))
