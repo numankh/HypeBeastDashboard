@@ -8,6 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import urllib.request
 from utils.cleaning import cleanString
+from nlp.readabilityIndex import flesch_reading_ease_score
+from nlp.readabilityIndex import average_grade_score
 
 rows = []
 
@@ -133,6 +135,12 @@ def scrapeItemPage(item):
     iframe_soup = BeautifulSoup(response, 'html.parser')
     raw_item_description = iframe_soup.find('div', attrs = {'id':'ds_div'}).text
     item_description = cleanString(raw_item_description)
+    print(item_description)
+    desc_fre_score = flesch_reading_ease_score(item_description)
+    desc_avg_grade_score = average_grade_score(item_description)
+    print(f"FRE SCORE: <{desc_fre_score}>")
+    print(f"AVG GRADE SCORE: <{desc_avg_grade_score}>")
+
 
     # Obtain item size
     shoeSize = ""
@@ -182,6 +190,8 @@ def scrapeItemPage(item):
         "number_of_images": numberOfItemImgs,
         "seller_rating": sellerRating,
         "item_description": item_description,
+        "desc_fre_score": desc_fre_score,
+        "desc_avg_grade_score": desc_avg_grade_score,
         "shoe_size": shoeSize,
         "adult_shoe": adult_shoe,
         "youth_shoe": youth_shoe,

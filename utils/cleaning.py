@@ -55,7 +55,6 @@ def removeStringsWithNumbers(text):
     return " ".join(my_list)
 
 def cleanString(text):
-    # text = "    WHAT's GOOD, my dude!!!! Did you buy bananas, apples, oranges \u200c from the store?????"
     text = case_normalization(text)
     text = remove_whitespace(text)
     text = remove_punctuation(text)
@@ -63,11 +62,12 @@ def cleanString(text):
     # text = remove_social_data(text)
     text = remove_stopwords(text)
     text = removeStringsWithNumbers(text)
-    # text = lemmatizer(text)
+    text = lemmatizer(text)
+    # text = stemming(text)
     return text
 
 if __name__ == "__main__":
-    cleanString("test")
+    print(cleanString("test"))
 
 
 

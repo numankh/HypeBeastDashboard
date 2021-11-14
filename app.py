@@ -32,6 +32,8 @@ class Shoe(db.Model):
     total_images = db.Column(db.Integer())
     seller_rating = db.Column(db.Integer())
     item_description = db.Column(db.String())
+    desc_fre_score = db.Column(db.Integer())
+    desc_avg_grade_score = db.Column(db.Integer())
     shoe_size = db.Column(db.Float())
     adult_shoe = db.Column(db.Boolean())
     youth_shoe = db.Column(db.Boolean())
@@ -42,13 +44,16 @@ class Shoe(db.Model):
 
     def __init__(self, name, price, free_shipping, item_description, total_images,
                     seller_rating, shoe_size, adult_shoe, youth_shoe, child_shoe,
-                    url, model, sold, item_offer_info, item_bid_info):
+                    url, model, sold, item_offer_info, item_bid_info, desc_fre_score,
+                    desc_avg_grade_score):
         self.name = name
         self.price = price
         self.free_shipping = free_shipping
         self.item_offer_info = item_offer_info
         self.item_bid_info = item_bid_info
         self.item_description = item_description
+        self.desc_fre_score = desc_fre_score
+        self.desc_avg_grade_score = desc_avg_grade_score
         self.total_images = total_images
         self.seller_rating = seller_rating
         self.shoe_size = shoe_size
@@ -68,6 +73,8 @@ class Shoe(db.Model):
             'name': self.name,
             'price': self.price,
             'item_description': self.item_description,
+            'desc_fre_score': self.desc_fre_score,
+            'desc_avg_grade_score': self.desc_avg_grade_score,
             'free_shipping': self.free_shipping,
             'item_offer_info': self.item_offer_info,
             'item_bid_info': self.item_bid_info,
@@ -96,39 +103,39 @@ def hello_name(name):
 """
 Routes for PostgresQL database
 """
-@app.route("/add")
-def add_shoe():
-    name = "item-title"
-    price = 12.34
-    free_shipping = True
-    shoe_size = 10
-    total_images = 5
-    seller_rating = 100
-    adult_shoe = True
-    youth_shoe = False
-    child_shoe = False
-    url = "test-url"
-    model = "test-model"
+# @app.route("/add")
+# def add_shoe():
+#     name = "item-title"
+#     price = 12.34
+#     free_shipping = True
+#     shoe_size = 10
+#     total_images = 5
+#     seller_rating = 100
+#     adult_shoe = True
+#     youth_shoe = False
+#     child_shoe = False
+#     url = "test-url"
+#     model = "test-model"
 
-    try:
-        shoe=Shoe(
-            name=name,
-            price=price,
-            free_shipping=free_shipping,
-            shoe_size=shoe_size,
-            total_images=total_images,
-            seller_rating=seller_rating,
-            adult_shoe=adult_shoe,
-            youth_shoe=youth_shoe,
-            child_shoe=child_shoe,
-            url=url,
-            model=model
-        )
-        db.session.add(shoe)
-        db.session.commit()
-        return "Shoe added. shoe id={}".format(shoe.id)
-    except Exception as e:
-	    return(str(e))
+#     try:
+#         shoe=Shoe(
+#             name=name,
+#             price=price,
+#             free_shipping=free_shipping,
+#             shoe_size=shoe_size,
+#             total_images=total_images,
+#             seller_rating=seller_rating,
+#             adult_shoe=adult_shoe,
+#             youth_shoe=youth_shoe,
+#             child_shoe=child_shoe,
+#             url=url,
+#             model=model
+#         )
+#         db.session.add(shoe)
+#         db.session.commit()
+#         return "Shoe added. shoe id={}".format(shoe.id)
+#     except Exception as e:
+# 	    return(str(e))
 
 @app.route("/scrapeAndStore")
 def scrape_and_store():
@@ -139,7 +146,8 @@ def scrape_and_store():
                 shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
                 adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
                 url=record["item_url"], item_description=record["item_description"], model="Nike Dunk Low x Social Status",
-                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"]))
+                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"],
+                desc_fre_score=record["desc_fre_score"], desc_avg_grade_score=record["desc_avg_grade_score"]))
     try:
         db.session.add_all(test_list)
         db.session.commit()
@@ -156,7 +164,8 @@ def scrape_and_store_test():
                 shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
                 adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
                 url=record["item_url"], item_description=record["item_description"], model="Nike Dunk Low x Social Status",
-                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"])
+                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"],
+                desc_fre_score=record["desc_fre_score"], desc_avg_grade_score=record["desc_avg_grade_score"])
             db.session.add(shoe)
             db.session.commit()
             print("Shoe added. shoe id={}".format(shoe.id))
