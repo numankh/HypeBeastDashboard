@@ -1,4 +1,4 @@
-import spacy
+# import spacy
 from textstat.textstat import textstatistics,legacy_round
 import textstat
 import en_core_web_sm

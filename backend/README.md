@@ -2,7 +2,7 @@
 
 ## HOW TO VIRTUALENV
 Activating virtual environment:
-`source env/bin/activate`
+`source venv/bin/activate`
 
 ## HOW TO FLASK
 Flask Database Migration commands:
