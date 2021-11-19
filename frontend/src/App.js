@@ -1,35 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
 
-function App() {
-  const [currentTime, setCurrentTime] = useState(0);
+const baseURL = "/shoe/size/9";
 
-  useEffect(() => {
-    fetch('/time').then(res => res.json()).then(data => {
-      setCurrentTime(data.time);
+export default function App() {
+  const [shoes, setShoes] = React.useState([]);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setShoes(response.data);
     });
   }, []);
 
+  if (!shoes) return null;
+
+  const listItems = shoes.map((shoe) =>
+    <div>
+      <p>{shoe.name}</p>
+      <p>{shoe.item_description}</p>
+      <p>{shoe.url}</p>
+      <p>---------------------------------</p>
+    </div>
+  );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <p>The current time is {currentTime}.</p>
-      </header>
+    <div>
+      <ul>{listItems}</ul>
     </div>
   );
 }
-
-export default App;
