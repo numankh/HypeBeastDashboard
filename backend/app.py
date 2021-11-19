@@ -151,7 +151,6 @@ def get_by_id(_id):
     except Exception as e:
 	    return(str(e))
 
-
 @app.route("/shoe/size/<_size>")
 def get_by_size(_size):
     try:
