@@ -6,6 +6,7 @@ from flask_cors import CORS
 import os
 from ebayScraper import ebayScraperMain
 import time
+from itertools import groupby
 
 
 """
@@ -164,6 +165,16 @@ def get_order_by_price():
     try:
         shoes=Shoe.query.order_by(Shoe.price)
         return jsonify([e.serialize() for e in shoes])
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/size/adult")
+def get_adult_shoe_sizes():
+    try:
+        shoes=Shoe.query.filter((Shoe.adult_shoe == True)).all()
+        items=[e.shoe_size for e in shoes]
+        results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
+        return jsonify(results)
     except Exception as e:
 	    return(str(e))
 

@@ -13,11 +13,14 @@ import {XYPlot,
         VerticalBarSeriesCanvas,
         LabelSeries} from 'react-vis';
 import {curveCatmullRom} from 'd3-shape';
+import BarGraph from './utils/bar-graph';
 
 const baseURL = "/shoe/size/9";
 
 export default function App() {
   const [shoes, setShoes] = React.useState([]);
+
+  const [shoeSizes, setShoeSizes] = React.useState([]); // for child comp
 
   const data = [
     {x: 0, y: 8},
@@ -44,6 +47,12 @@ export default function App() {
   React.useEffect(() => {
     axios.get(baseURL).then((response) => {
       setShoes(response.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get("/size/adult").then((response) => {
+      setShoeSizes(response.data);
     });
   }, []);
 
@@ -100,10 +109,10 @@ export default function App() {
           <XAxis />
           <YAxis />
           <VerticalBarSeries className="vertical-bar-series-example" data={greenData} />
-          <VerticalBarSeries data={blueData} />
-          <LabelSeries data={labelData} getLabel={d => d.x} />
+          {/* <VerticalBarSeries data={blueData} /> */}
+          {/* <LabelSeries data={labelData} getLabel={d => d.x} /> */}
         </XYPlot>
-
+      <BarGraph parentToChild={shoeSizes}/>
       <ul>{listItems}</ul>
     </div>
   );
