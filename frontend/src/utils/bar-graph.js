@@ -20,7 +20,7 @@ function Test(props) {
     }
     
     return(
-        <XYPlot xType="ordinal" width={700} height={400} xDistance={300}>
+        <XYPlot xType="ordinal" width={600} height={300} xDistance={300}>
             <VerticalGridLines />
             <HorizontalGridLines />
             <XAxis />
@@ -33,7 +33,6 @@ function Test(props) {
 export default function BarGraph({parentToChild}) {
   return (
     <div>
-        <h1>HELLO</h1>
         <Test value={parentToChild}/>
     </div>
   );

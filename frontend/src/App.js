@@ -3,17 +3,19 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import '../node_modules/react-vis/dist/style.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import {XYPlot,
         LineSeries,
         VerticalGridLines,
         HorizontalGridLines,
         XAxis,
         YAxis,
-        VerticalBarSeries,
-        VerticalBarSeriesCanvas,
-        LabelSeries} from 'react-vis';
+        VerticalBarSeries} from 'react-vis';
 import {curveCatmullRom} from 'd3-shape';
 import BarGraph from './utils/bar-graph';
+import {Container, Row, Col} from 'react-bootstrap';
+
+import Navbar from './layout/Navbar'
 
 const baseURL = "/shoe/size/9";
 
@@ -69,7 +71,9 @@ export default function App() {
 
   return (
     <div>
-      <XYPlot width={300} height={300}>
+      <Navbar />
+
+      {/* <XYPlot width={300} height={300}>
       <HorizontalGridLines style={{stroke: '#B7E9ED'}} />
       <VerticalGridLines style={{stroke: '#B7E9ED'}} />
       <XAxis
@@ -109,10 +113,27 @@ export default function App() {
           <XAxis />
           <YAxis />
           <VerticalBarSeries className="vertical-bar-series-example" data={greenData} />
-          {/* <VerticalBarSeries data={blueData} /> */}
-          {/* <LabelSeries data={labelData} getLabel={d => d.x} /> */}
-        </XYPlot>
+          <VerticalBarSeries data={blueData} />
+          <LabelSeries data={labelData} getLabel={d => d.x} />
+        </XYPlot> */}
+
+
+
+      {/* <BarGraph parentToChild={shoeSizes}/>
       <BarGraph parentToChild={shoeSizes}/>
+      <BarGraph parentToChild={shoeSizes}/> */}
+
+      <Container>
+        <Row>
+          <Col>
+            <BarGraph parentToChild={shoeSizes}/>
+          </Col>
+          <Col>
+            <BarGraph parentToChild={shoeSizes}/>
+          </Col>
+        </Row>
+      </Container>
+
       <ul>{listItems}</ul>
     </div>
   );
