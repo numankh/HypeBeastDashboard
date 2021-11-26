@@ -178,5 +178,32 @@ def get_adult_shoe_sizes():
     except Exception as e:
 	    return(str(e))
 
+@app.route("/free_shipping")
+def get_free_shipping_data():
+    try:
+        shoes=Shoe.query.order_by(Shoe.free_shipping)
+        res=[shoe.free_shipping for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/item_offer")
+def get_item_offer_data():
+    try:
+        shoes=Shoe.query.order_by(Shoe.item_offer_info)
+        res=[shoe.item_offer_info for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/item_bid")
+def get_item_bid_data():
+    try:
+        shoes=Shoe.query.order_by(Shoe.item_bid_info)
+        res=[shoe.item_bid_info for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+	    return(str(e))
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=4000)

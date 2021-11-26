@@ -12,17 +12,20 @@ import {XYPlot,
         YAxis,
         VerticalBarSeries} from 'react-vis';
 import {curveCatmullRom} from 'd3-shape';
-import BarGraph from './utils/bar-graph';
 import {Container, Row, Col} from 'react-bootstrap';
 
+import PieChart from './utils/pie-chart'
+import BarGraph from './utils/bar-chart';
 import Navbar from './layout/Navbar'
 
 const baseURL = "/shoe/size/9";
 
 export default function App() {
   const [shoes, setShoes] = React.useState([]);
-
   const [shoeSizes, setShoeSizes] = React.useState([]); // for child comp
+  const [freeShipping, setFreeShipping] = React.useState([]);
+  const [itemOffer, setItemOffer] = React.useState([]);
+  const [itemBid, setItemBid] = React.useState([]);
 
   const data = [
     {x: 0, y: 8},
@@ -55,6 +58,24 @@ export default function App() {
   React.useEffect(() => {
     axios.get("/size/adult").then((response) => {
       setShoeSizes(response.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get("/free_shipping").then((response) => {
+      setFreeShipping(response.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get("/item_offer").then((response) => {
+      setItemOffer(response.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get("/item_bid").then((response) => {
+      setItemBid(response.data);
     });
   }, []);
 
@@ -130,6 +151,29 @@ export default function App() {
           </Col>
           <Col>
             <BarGraph parentToChild={shoeSizes}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <PieChart value={freeShipping}
+                      title={"Free Shipping Offered"}
+                      feature1={"Free Shipping"}
+                      feature2={"No Free Shipping"}
+            />
+          </Col>
+          <Col>
+            <PieChart value={itemOffer}
+                      title={"Item Offer Provided"}
+                      feature1={"Item Offer"}
+                      feature2={"No Item Offer"}
+            />
+          </Col>
+          <Col>
+            <PieChart value={itemBid}
+                      title={"Item Bid Provided"}
+                      feature1={"Item Bid"}
+                      feature2={"No Item Bid"}
+            />
           </Col>
         </Row>
       </Container>
