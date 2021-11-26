@@ -17,6 +17,7 @@ import {Container, Row, Col} from 'react-bootstrap';
 import PieChart from './utils/pie-chart'
 import BarGraph from './utils/bar-chart';
 import Navbar from './layout/Navbar'
+import GoogleBarGraph from './utils/google-bar-chart'
 
 const baseURL = "/shoe/size/9";
 
@@ -26,6 +27,8 @@ export default function App() {
   const [freeShipping, setFreeShipping] = React.useState([]);
   const [itemOffer, setItemOffer] = React.useState([]);
   const [itemBid, setItemBid] = React.useState([]);
+  const [totalImages, setTotalImages] = React.useState([]);
+
 
   const data = [
     {x: 0, y: 8},
@@ -76,6 +79,12 @@ export default function App() {
   React.useEffect(() => {
     axios.get("/item_bid").then((response) => {
       setItemBid(response.data);
+    });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get("/total_item_images").then((response) => {
+      setTotalImages(response.data);
     });
   }, []);
 
@@ -174,6 +183,14 @@ export default function App() {
                       feature1={"Item Bid"}
                       feature2={"No Item Bid"}
             />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <GoogleBarGraph value={totalImages}
+                            title={"Total Seller Provided Item Images"}
+                            xaxis={"Total Images"}
+                            yaxis={"Frequency"}/>
           </Col>
         </Row>
       </Container>

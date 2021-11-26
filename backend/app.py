@@ -205,5 +205,14 @@ def get_item_bid_data():
     except Exception as e:
 	    return(str(e))
 
+@app.route("/total_item_images")
+def get_total_item_images():
+    try:
+        shoes = Shoe.query.order_by(Shoe.total_images)
+        res = [shoe.total_images for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+        return(str(e))
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=4000)
