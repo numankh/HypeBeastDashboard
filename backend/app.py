@@ -214,5 +214,42 @@ def get_total_item_images():
     except Exception as e:
         return(str(e))
 
+@app.route("/price")
+def get_all_shoe_prices():
+    try:
+        shoes = Shoe.query.all()
+        res = [shoe.price for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+        return(str(e))
+
+@app.route("/seller_rating")
+def get_all_seller_ratings():
+    try:
+        shoes = Shoe.query.all()
+        res = [shoe.seller_rating for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+        return(str(e))
+
+@app.route("/item_description/fre_score")
+def get_all_fre_scores():
+    try:
+        shoes = Shoe.query.all()
+        res = [shoe.desc_fre_score for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+        return(str(e))
+
+@app.route("/item_description/avg_grade_score")
+def get_all_avg_grade_scores():
+    try:
+        shoes = Shoe.query.all()
+        res = [shoe.desc_avg_grade_score for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+        return(str(e))
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=4000)

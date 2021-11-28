@@ -18,19 +18,11 @@ const getFrequency = (array) => {
         return a - b;
       });
 
-    console.log(`BRUHH: ${Object.keys(map)}`);
-    console.log(`SORTED: ${sorted}`);
     
     const res = [["test", "test2"]]
-    // for (const [ key, value ] of Object.entries(map)) {
-    //     res.push([key, value])
-    // }
-
     sorted.forEach(function (item, index) {
         res.push([item, map[item]]);
     });
-
-    console.log(res)
     return res;
  };
 

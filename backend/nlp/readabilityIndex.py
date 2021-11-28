@@ -13,6 +13,6 @@ def average_grade_score(text):
 	return round(total / 6, 2)
 
 if __name__ == "__main__":
-    sample_text = "I dont understand what is going on please work my name is numan khan "
+    sample_text = "As the years pass by, we all know owners look more and more like their dogs"
     print(textstat.flesch_reading_ease(sample_text))
     print(average_grade_score(sample_text))
