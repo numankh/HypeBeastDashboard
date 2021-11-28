@@ -12,11 +12,25 @@ const getFrequency = (array) => {
           map[item] = 1;
        }
     });
+
+    const temp = Object.keys(map);
+    const sorted = temp.sort(function(a, b){
+        return a - b;
+      });
+
+    console.log(`BRUHH: ${Object.keys(map)}`);
+    console.log(`SORTED: ${sorted}`);
     
     const res = [["test", "test2"]]
-    for (const [ key, value ] of Object.entries(map)) {
-        res.push([key, value])
-    }
+    // for (const [ key, value ] of Object.entries(map)) {
+    //     res.push([key, value])
+    // }
+
+    sorted.forEach(function (item, index) {
+        res.push([item, map[item]]);
+    });
+
+    console.log(res)
     return res;
  };
 
@@ -26,8 +40,8 @@ export default function GoogleBarChart(props) {
     return (
         <div>
             <Chart
-                width={'500px'}
-                height={'600px'}
+                width={props.width}
+                height={props.height}
                 chartType="ColumnChart"
                 loader={<div>Loading Chart</div>}
                 data={data}

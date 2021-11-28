@@ -22,7 +22,6 @@ import GoogleBarGraph from './utils/google-bar-chart'
 const baseURL = "/shoe/size/9";
 
 export default function App() {
-  const [shoes, setShoes] = React.useState([]);
   const [shoeSizes, setShoeSizes] = React.useState([]); // for child comp
   const [freeShipping, setFreeShipping] = React.useState([]);
   const [itemOffer, setItemOffer] = React.useState([]);
@@ -52,11 +51,6 @@ export default function App() {
     y: Math.max(greenData[idx].y, blueData[idx].y)
   }));
 
-  React.useEffect(() => {
-    axios.get(baseURL).then((response) => {
-      setShoes(response.data);
-    });
-  }, []);
 
   React.useEffect(() => {
     axios.get("/size/adult").then((response) => {
@@ -88,16 +82,16 @@ export default function App() {
     });
   }, []);
 
-  if (!shoes) return null;
+  // if (!shoes) return null;
 
-  const listItems = shoes.map((shoe) =>
-    <div>
-      <p>{shoe.name}</p>
-      <p>{shoe.item_description}</p>
-      <p>{shoe.url}</p>
-      <p>---------------------------------</p>
-    </div>
-  );
+  // const listItems = shoes.map((shoe) =>
+  //   <div>
+  //     <p>{shoe.name}</p>
+  //     <p>{shoe.item_description}</p>
+  //     <p>{shoe.url}</p>
+  //     <p>---------------------------------</p>
+  //   </div>
+  // );
 
   return (
     <div>
@@ -154,14 +148,14 @@ export default function App() {
       <BarGraph parentToChild={shoeSizes}/> */}
 
       <Container>
-        <Row>
+        {/* <Row>
           <Col>
             <BarGraph parentToChild={shoeSizes}/>
           </Col>
           <Col>
             <BarGraph parentToChild={shoeSizes}/>
           </Col>
-        </Row>
+        </Row> */}
         <Row>
           <Col>
             <PieChart value={freeShipping}
@@ -190,12 +184,23 @@ export default function App() {
             <GoogleBarGraph value={totalImages}
                             title={"Total Seller Provided Item Images"}
                             xaxis={"Total Images"}
-                            yaxis={"Frequency"}/>
+                            yaxis={"Frequency"}
+                            width={'400px'}
+                            height={'500px'}/>
           </Col>
+          <Col>
+            <GoogleBarGraph value={shoeSizes}
+                            title={"Distribution of Adult Shoe Size"}
+                            xaxis={"Adult Shoe Size"}
+                            yaxis={"Frequency"}
+                            width={'800px'}
+                            height={'500px'}/>
+          </Col>
+
         </Row>
       </Container>
 
-      <ul>{listItems}</ul>
+      {/* <ul>{listItems}</ul> */}
     </div>
   );
 }

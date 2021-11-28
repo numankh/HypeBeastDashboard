@@ -173,8 +173,8 @@ def get_adult_shoe_sizes():
     try:
         shoes=Shoe.query.filter((Shoe.adult_shoe == True)).all()
         items=[e.shoe_size for e in shoes]
-        results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
-        return jsonify(results)
+        # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
+        return jsonify(items)
     except Exception as e:
 	    return(str(e))
 
