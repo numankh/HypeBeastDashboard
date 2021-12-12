@@ -124,6 +124,13 @@ def scrape_sold_page():
     except:
         print(f"Error with finding the price when the item sold")
 
+    # Obtain seller rating
+    try:
+        seller_rating = soup.find('span', attrs = {'class':'mbg-l'}).find('a').text
+        print(f"Seller rating: <{seller_rating}>")
+    except:
+        print(f"Error with finding seller's rating")
+
     try:
         spanTag = soup.find('span', attrs = {'class':'vi-inl-lnk vi-original-listing'})
         item_page_url = spanTag.find("a", recursive=False)["href"]
@@ -133,11 +140,13 @@ def scrape_sold_page():
 
     pageRes = scrapeItemPage(item_page_url)
     res = {
+        "sold": True,
         "item_title": item_title,
         "sold_date": sold_date,
         "free_shipping": free_shipping,
         "item_price": item_price,
-        "item_url": item_page_url
+        "item_url": item_page_url,
+        "seller_rating": seller_rating
     }
     res.update(pageRes)
 
