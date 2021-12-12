@@ -201,8 +201,9 @@ def scrapeItemPage(item):
     rows.append(itemData)
 
 def ebayScraperMain():
-    for ebayPageNumber in range(1,5):
+    for ebayPageNumber in range(1,6):
         URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=nike+dunk+mid+social+status+chocolate+milk&_sacat=&rt=nc&LH_ItemCondition=1000&_pgn={ebayPageNumber}" 
+        # URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=nike+blazer+x+sacai+x+kaws+red+men%27s+shoes&_sacat=0&LH_TitleDesc=0&rt=nc&_pgn={ebayPageNumber}"
         r = requests.get(URL)
         soup = BeautifulSoup(r.content, 'html.parser')
 
