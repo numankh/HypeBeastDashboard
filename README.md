@@ -1,4 +1,4 @@
-# HypeBeastHelper
+# HypeBeastDashboard
 
 This is an analytics dashboard for eBay shoe resellers
 
