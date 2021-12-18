@@ -52,7 +52,7 @@ def scrapeItemPage(item):
     try:
         rawItemTitle = item.find('h3', attrs = {'class':'s-item__title'}).text
         itemTitle = rawItemTitle
-        print(itemTitle)
+        # print(itemTitle)
         # print(f"Shoe size from title <{extractShoeSize(itemTitle)}>")
     except Exception as e:
         print(f"Error with obtaining item title for <{item}>")
@@ -123,8 +123,9 @@ def scrapeItemPage(item):
 
     # Obtain seller rating
     try:
-        sellerRating = itemPageSoup.find('span', attrs = {'class':'mbg-l'}).find('a').text
-        print(sellerRating)
+        sellerRating = itemPageSoup.find('div', attrs = {'class':'ux-seller-section__item--seller'}).findAll('a')[1].text
+        # sellerRating = itemPageSoup.find('span', attrs = {'class':'mbg-l'}).find('a').text
+        # print(f"Seller rating: <{sellerRating}>")
     except Exception as e:
         print(f"Error with obtaining seller's rating on item page, check url: <{itemUrl}>")
         pass
@@ -135,11 +136,11 @@ def scrapeItemPage(item):
     iframe_soup = BeautifulSoup(response, 'html.parser')
     raw_item_description = iframe_soup.find('div', attrs = {'id':'ds_div'}).text
     item_description = cleanString(raw_item_description)
-    print(item_description)
+    # print(item_description)
     desc_fre_score = flesch_reading_ease_score(item_description)
     desc_avg_grade_score = average_grade_score(item_description)
-    print(f"FRE SCORE: <{desc_fre_score}>")
-    print(f"AVG GRADE SCORE: <{desc_avg_grade_score}>")
+    # print(f"FRE SCORE: <{desc_fre_score}>")
+    # print(f"AVG GRADE SCORE: <{desc_avg_grade_score}>")
 
 
     # Obtain item size
@@ -179,7 +180,7 @@ def scrapeItemPage(item):
     if (not shoeSize.isdigit() and not isFloat(shoeSize)):
         shoeSize = shoeSizeOverride(rawItemTitle)
 
-    print("===========================")
+
     # Store fields in a dictionary
     itemData = {
         "item_name": itemTitle,
@@ -196,28 +197,33 @@ def scrapeItemPage(item):
         "adult_shoe": adult_shoe,
         "youth_shoe": youth_shoe,
         "child_shoe": child_shoe,
-        "item_url": itemUrl
+        "item_url": itemUrl,
+        "model": "Sacai x KAWS x Nike Blazer Low",
+        "sold_date": None,
+        "sold": False
     }
+
+    print(itemData)
     rows.append(itemData)
+    print("===========================")
 
 def ebayScraperMain():
-    for ebayPageNumber in range(1,6):
-        URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=nike+dunk+mid+social+status+chocolate+milk&_sacat=&rt=nc&LH_ItemCondition=1000&_pgn={ebayPageNumber}" 
-        # URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=nike+blazer+x+sacai+x+kaws+red+men%27s+shoes&_sacat=0&LH_TitleDesc=0&rt=nc&_pgn={ebayPageNumber}"
+    for ebayPageNumber in range(1,7):
+        URL = f"https://www.ebay.com/sch/i.html?_from=R40&_trksid=p2380057.m570.l1312&_nkw=kaws+sacai+nike+blazer+low+red&_sacat=0&_pgn={ebayPageNumber}"
+        # URL = f"https://www.ebay.com/sch/i.html?_from=R40&_nkw=nike+dunk+mid+social+status+chocolate+milk&_sacat=&rt=nc&LH_ItemCondition=1000&_pgn={ebayPageNumber}" 
         r = requests.get(URL)
         soup = BeautifulSoup(r.content, 'html.parser')
 
-        print(f"PAGE NUMBER: <{ebayPageNumber}>")
-        print("=============================================")
+        print(f"Currently scraping this url: <{URL}>")
         
-        try:
-            table = soup.find('ul', attrs = {'class':'srp-results srp-grid clearfix'})
-        except Exception as e:
-            print(f"Error with page number <{ebayPageNumber}>")
-            pass
-
-        for item in table.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'}):
-            scrapeItemPage(item)
+        pageData = soup.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'})
+        
+        if (pageData):
+            for item in pageData:
+                scrapeItemPage(item)
+        else:
+            print("ERROR: unable to scrape item list page")
+        print("=============================================")
 
     return rows
 

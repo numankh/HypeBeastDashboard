@@ -5,9 +5,10 @@ from flask_cors import CORS
 # from models import db
 import os
 from ebayScraper import ebayScraperMain
+from testItemSoldScraper import main
 import time
 from itertools import groupby
-
+from datetime import datetime
 
 """
 Basic app setup
@@ -44,12 +45,13 @@ class Shoe(db.Model):
     child_shoe = db.Column(db.Boolean())
     url = db.Column(db.String())
     model = db.Column(db.String())
+    sold_date = db.Column(db.DateTime())
     sold = db.Column(db.Boolean())
 
     def __init__(self, name, price, free_shipping, item_description, total_images,
                     seller_rating, shoe_size, adult_shoe, youth_shoe, child_shoe,
                     url, model, sold, item_offer_info, item_bid_info, desc_fre_score,
-                    desc_avg_grade_score):
+                    desc_avg_grade_score, sold_date):
         self.name = name
         self.price = price
         self.free_shipping = free_shipping
@@ -66,6 +68,7 @@ class Shoe(db.Model):
         self.child_shoe = child_shoe
         self.url = url
         self.model = model
+        self.sold_date = sold_date
         self.sold = sold
 
     def __repr__(self):
@@ -90,6 +93,7 @@ class Shoe(db.Model):
             'child_shoe': self.child_shoe,
             'url': self.url,
             'model': self.model,
+            'sold_date': self.sold_date,
             'sold': self.sold
         }
 
@@ -119,9 +123,10 @@ def scrape_and_store():
         test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
                 shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
                 adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
-                url=record["item_url"], item_description=record["item_description"], model="Nike Dunk Low x Social Status",
-                sold=False, item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"],
-                desc_fre_score=record["desc_fre_score"], desc_avg_grade_score=record["desc_avg_grade_score"]))
+                url=record["item_url"], item_description=record["item_description"], model=record["model"],
+                sold=record["sold"], item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"],
+                desc_fre_score=record["desc_fre_score"], desc_avg_grade_score=record["desc_avg_grade_score"],
+                sold_date=record["sold_date"]))
     try:
         db.session.add_all(test_list)
         db.session.commit()
@@ -129,6 +134,24 @@ def scrape_and_store():
     except Exception as e:
         return(str(e))
 
+@app.route("/scrapeAndStoreSoldItems")
+def scrape_and_store_sold_items():
+    temp = main()
+    test_list = []
+    for record in temp:
+        test_list.append(Shoe(name=record["item_name"], price=record["item_price"], free_shipping=record["free_shipping"],
+                shoe_size=record["shoe_size"], total_images=record["number_of_images"], seller_rating=record["seller_rating"],
+                adult_shoe=record["adult_shoe"], youth_shoe=record["youth_shoe"], child_shoe=record["child_shoe"],
+                url=record["item_url"], item_description=record["item_description"], model=record["model"],
+                sold=record["sold"], item_offer_info=record["item_offer_info"], item_bid_info=record["item_bid_info"],
+                desc_fre_score=record["desc_fre_score"], sold_date=record["sold_date"],
+                desc_avg_grade_score=record["desc_avg_grade_score"]))
+    try:
+        db.session.add_all(test_list)
+        db.session.commit()
+        return "Bunch of shoes added!"
+    except Exception as e:
+        return(str(e))
 
 @app.route("/scrapeTest")
 def scrape():
@@ -168,10 +191,20 @@ def get_order_by_price():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/size/adult")
+@app.route("/size/adult/listed")
 def get_adult_shoe_sizes():
     try:
-        shoes=Shoe.query.filter((Shoe.adult_shoe == True)).all()
+        shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == False)).all()
+        items=[e.shoe_size for e in shoes]
+        # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
+        return jsonify(items)
+    except Exception as e:
+	    return(str(e))
+
+@app.route("/size/adult/sold")
+def get_sold_adult_shoe_sizes():
+    try:
+        shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == True)).all()
         items=[e.shoe_size for e in shoes]
         # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
         return jsonify(items)
