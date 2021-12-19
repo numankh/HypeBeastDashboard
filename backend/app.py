@@ -191,13 +191,15 @@ def get_order_by_price():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/size/adult/listed")
+@app.route("/size/adult/notsold")
 def get_adult_shoe_sizes():
     try:
         shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == False)).all()
-        items=[e.shoe_size for e in shoes]
-        # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
-        return jsonify(items)
+        res = []
+        for shoe in shoes:
+            if shoe.shoe_size:
+                res.append(shoe.shoe_size)
+        return jsonify(res)
     except Exception as e:
 	    return(str(e))
 
