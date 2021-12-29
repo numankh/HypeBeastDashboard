@@ -285,6 +285,14 @@ def get_all_avg_grade_scores():
     except Exception as e:
         return(str(e))
 
+@app.route("/sold_dates")
+def get_sold_dates():
+    try:
+        shoes=Shoe.query.filter((Shoe.sold == True)).all()
+        res = [shoe.sold_date for shoe in shoes]
+        return jsonify(res)
+    except Exception as e:
+	    return(str(e))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=4000)
