@@ -191,24 +191,37 @@ def get_order_by_price():
     except Exception as e:
 	    return(str(e))
 
-@app.route("/size/adult/notsold")
-def get_adult_shoe_sizes():
-    try:
-        shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == False)).all()
-        res = []
-        for shoe in shoes:
-            if shoe.shoe_size:
-                res.append(shoe.shoe_size)
-        return jsonify(res)
-    except Exception as e:
-	    return(str(e))
+# @app.route("/size/adult/notsold")
+# def get_adult_shoe_sizes():
+#     try:
+#         shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == False)).all()
+#         res = []
+#         for shoe in shoes:
+#             if shoe.shoe_size:
+#                 res.append(shoe.shoe_size)
+#         return jsonify(res)
+#     except Exception as e:
+# 	    return(str(e))
 
-@app.route("/size/adult/sold")
+# @app.route("/size/adult/sold")
+# def get_sold_adult_shoe_sizes():
+#     try:
+#         shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == True)).all()
+#         items=[e.shoe_size for e in shoes]
+#         # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
+#         return jsonify(items)
+#     except Exception as e:
+# 	    return(str(e))
+
+@app.route("/size/adult")
 def get_sold_adult_shoe_sizes():
     try:
-        shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == True)).all()
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes=Shoe.query.filter(Shoe.adult_shoe == True).all()
+        else:
+            shoes=Shoe.query.filter((Shoe.adult_shoe == True) & (Shoe.sold == sold)).all()
         items=[e.shoe_size for e in shoes]
-        # results = {value: len(list(freq)) for value, freq in groupby(sorted(items))}
         return jsonify(items)
     except Exception as e:
 	    return(str(e))

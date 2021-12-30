@@ -7,9 +7,7 @@ import {
 import App from "./App";
 import TrendingShoes from "./pages/trending";
 import SiteComparison from "./pages/siteComp";
-import AllShoes from "./pages/allShoes";
-import NotSoldShoes from "./pages/listedShoes";
-import SoldShoes from "./pages/soldShoes";
+import EbayShoeAnalytics from "./pages/ebayShoeAnalytics";
 
 const rootElement = document.getElementById("root");
 render(
@@ -18,9 +16,7 @@ render(
       <Route path="/" element={<App />} />
       <Route path="trending" element={<TrendingShoes />} />
       <Route path="sitecomp" element={<SiteComparison />} />
-      <Route path="analytics/shoes/all" element={<AllShoes />} />
-      <Route path="analytics/shoes/notsold" element={<NotSoldShoes />} />
-      <Route path="analytics/shoes/sold" element={<SoldShoes />} />
+      <Route path="analytics" element={<EbayShoeAnalytics />} />
     </Routes>
   </BrowserRouter>,
   rootElement

@@ -14,11 +14,7 @@ export default function CustomNavbar() {
                 <Nav className="me-auto">
                     <Nav.Link href="trending">Trending Shoes</Nav.Link>
                     <Nav.Link href="sitecomp">Site Comparison</Nav.Link>
-                    <NavDropdown title="Analytics" id="collasibles-nav-dropdown">
-                        <NavDropdown.Item href="analytics/shoes/all">All Shoes</NavDropdown.Item>
-                        <NavDropdown.Item href="analytics/shoes/notsold">Not Sold Shoes</NavDropdown.Item>
-                        <NavDropdown.Item href="analytics/shoes/sold">Sold Shoes</NavDropdown.Item>
-                    </NavDropdown>
+                    <Nav.Link href="analytics">Ebay Shoe Analytics</Nav.Link>
                 </Nav>
                 </Navbar.Collapse>
                 </Container>

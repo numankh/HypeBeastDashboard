@@ -8,6 +8,8 @@ import Navbar from '../layout/Navbar';
 import LineChart from '../utils/line-chart';
 import ScatterChart from '../utils/scatter-trendline-chart';
 import PieChart from '../utils/pie-chart';
+import GoogleBarGraph from '../utils/google-bar-chart';
+import Histogram from '../utils/histogram';
 
 
 function getFrequency(arr) {
@@ -54,9 +56,21 @@ function getFrequency(arr) {
 }
 
 export default function SoldShoes() {
-  const [soldDates, setSoldDates] = React.useState();
+  const [shoeSizes, setShoeSizes] = React.useState([]);
+  const [soldDates, setSoldDates] = React.useState([]);
   const [freeShipping, setFreeShipping] = React.useState([]);
+  const [totalImages, setTotalImages] = React.useState([]);
+  const [shoePrices, setShoePrices] = React.useState([]);
+  const [sellerRatings, setSellerRatings] = React.useState([]);
+  const [freScores, setFreScores] = React.useState([]);
+  const [gradeScores, setGradeScores] = React.useState([]);
   
+  React.useEffect(() => {
+    axios.get("/size/adult?sold=True").then((response) => {
+      setShoeSizes(response.data);
+    });
+  }, []);
+
   React.useEffect(() => {
     axios.get("/sold_dates").then((response) => {
       setSoldDates(getFrequency(response.data));
@@ -69,41 +83,35 @@ export default function SoldShoes() {
     });
   }, []);
 
-  // React.useEffect(() => {
-  //   axios.get("/total_item_images/sold").then((response) => {
-  //     setTotalImages(response.data);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    axios.get("/total_item_images?sold=True").then((response) => {
+      setTotalImages(response.data);
+    });
+  }, []);
 
-  // React.useEffect(() => {
-  //   axios.get("/total_item_images/sold").then((response) => {
-  //     setTotalImages(response.data);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    axios.get("/price?sold=True").then((response) => {
+      setShoePrices(response.data);
+    });
+  }, []);
 
-  // React.useEffect(() => {
-  //   axios.get("/price/sold").then((response) => {
-  //     setShoePrices(response.data);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    axios.get("/seller_rating?sold=True").then((response) => {
+      setSellerRatings(response.data);
+    });
+  }, []);
 
-  // React.useEffect(() => {
-  //   axios.get("/seller_rating/sold").then((response) => {
-  //     setSellerRatings(response.data);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    axios.get("/item_description/fre_score?sold=True").then((response) => {
+      setFreScores(response.data);
+    });
+  }, []);
 
-  // React.useEffect(() => {
-  //   axios.get("/item_description/fre_score/sold").then((response) => {
-  //     setFreScores(response.data);
-  //   });
-  // }, []);
-
-  // React.useEffect(() => {
-  //   axios.get("/item_description/avg_grade_score/sold").then((response) => {
-  //     setGradeScores(response.data);
-  //   });
-  // }, []);
+  React.useEffect(() => {
+    axios.get("/item_description/avg_grade_score?sold=True").then((response) => {
+      setGradeScores(response.data);
+    });
+  }, []);
 
   return (
     <div>
@@ -122,7 +130,7 @@ export default function SoldShoes() {
             />
           </Col>
         </Row>
-        {/* <Row>
+        <Row>
           <Col>
             <GoogleBarGraph value={totalImages}
                             title={"Total Seller Provided Item Images"}
@@ -168,7 +176,7 @@ export default function SoldShoes() {
                        width={"800px"}
                        height={"500px"}/>
           </Col>
-        </Row> */}
+        </Row>
       </Container>
     </div>
   );
