@@ -216,8 +216,12 @@ def get_sold_adult_shoe_sizes():
 @app.route("/free_shipping")
 def get_free_shipping_data():
     try:
-        shoes=Shoe.query.order_by(Shoe.free_shipping)
-        res=[shoe.free_shipping for shoe in shoes]
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.all()
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold))
+        res = [shoe.free_shipping for shoe in shoes]
         return jsonify(res)
     except Exception as e:
 	    return(str(e))
@@ -243,7 +247,11 @@ def get_item_bid_data():
 @app.route("/total_item_images")
 def get_total_item_images():
     try:
-        shoes = Shoe.query.order_by(Shoe.total_images)
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.order_by(Shoe.total_images)
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold)).order_by(Shoe.total_images)
         res = [shoe.total_images for shoe in shoes]
         return jsonify(res)
     except Exception as e:
@@ -252,7 +260,11 @@ def get_total_item_images():
 @app.route("/price")
 def get_all_shoe_prices():
     try:
-        shoes = Shoe.query.all()
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.order_by(Shoe.price)
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold)).order_by(Shoe.price)
         res = [shoe.price for shoe in shoes]
         return jsonify(res)
     except Exception as e:
@@ -261,7 +273,11 @@ def get_all_shoe_prices():
 @app.route("/seller_rating")
 def get_all_seller_ratings():
     try:
-        shoes = Shoe.query.all()
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.order_by(Shoe.seller_rating)
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold)).order_by(Shoe.seller_rating)
         res = [shoe.seller_rating for shoe in shoes]
         return jsonify(res)
     except Exception as e:
@@ -270,7 +286,11 @@ def get_all_seller_ratings():
 @app.route("/item_description/fre_score")
 def get_all_fre_scores():
     try:
-        shoes = Shoe.query.all()
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.order_by(Shoe.desc_fre_score)
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold)).order_by(Shoe.desc_fre_score)
         res = [shoe.desc_fre_score for shoe in shoes]
         return jsonify(res)
     except Exception as e:
@@ -279,7 +299,11 @@ def get_all_fre_scores():
 @app.route("/item_description/avg_grade_score")
 def get_all_avg_grade_scores():
     try:
-        shoes = Shoe.query.all()
+        sold = request.args.get("sold")
+        if sold is None:
+            shoes = Shoe.query.order_by(Shoe.desc_avg_grade_score)
+        else:
+            shoes = Shoe.query.filter((Shoe.sold == sold)).order_by(Shoe.desc_avg_grade_score)
         res = [shoe.desc_avg_grade_score for shoe in shoes]
         return jsonify(res)
     except Exception as e:

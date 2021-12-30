@@ -9,17 +9,6 @@ export const options = {
   trendlines: { 0: {} },
 };
 
-export const data = [
-  ["Diameter", "Age"],
-  [8, 37],
-  [4, 19.5],
-  [11, 52],
-  [4, 22],
-  [3, 16.5],
-  [6.5, 32.8],
-  [14, 72],
-];
-
 export default function scatterChart(props) {
   console.log(props.data)
 

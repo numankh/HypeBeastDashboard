@@ -7,7 +7,7 @@ import {Container, Row, Col} from 'react-bootstrap';
 import Navbar from '../layout/Navbar';
 import LineChart from '../utils/line-chart';
 import ScatterChart from '../utils/scatter-trendline-chart';
-
+import PieChart from '../utils/pie-chart';
 
 
 function getFrequency(arr) {
@@ -55,13 +55,55 @@ function getFrequency(arr) {
 
 export default function SoldShoes() {
   const [soldDates, setSoldDates] = React.useState();
+  const [freeShipping, setFreeShipping] = React.useState([]);
   
   React.useEffect(() => {
     axios.get("/sold_dates").then((response) => {
-      // (response.data);
       setSoldDates(getFrequency(response.data));
     });
   }, []);
+
+  React.useEffect(() => {
+    axios.get("/free_shipping?sold=True").then((response) => {
+      setFreeShipping(response.data);
+    });
+  }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/total_item_images/sold").then((response) => {
+  //     setTotalImages(response.data);
+  //   });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/total_item_images/sold").then((response) => {
+  //     setTotalImages(response.data);
+  //   });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/price/sold").then((response) => {
+  //     setShoePrices(response.data);
+  //   });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/seller_rating/sold").then((response) => {
+  //     setSellerRatings(response.data);
+  //   });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/item_description/fre_score/sold").then((response) => {
+  //     setFreScores(response.data);
+  //   });
+  // }, []);
+
+  // React.useEffect(() => {
+  //   axios.get("/item_description/avg_grade_score/sold").then((response) => {
+  //     setGradeScores(response.data);
+  //   });
+  // }, []);
 
   return (
     <div>
@@ -69,13 +111,64 @@ export default function SoldShoes() {
 
       <Container>
         <Row>
-          {/* <Col>
-            <LineChart />
-          </Col> */}
           <Col>
             <ScatterChart data={soldDates}/>
           </Col>
+          <Col>
+            <PieChart value={freeShipping}
+                      title={"Free Shipping Offered"}
+                      feature1={"Free Shipping"}
+                      feature2={"No Free Shipping"}
+            />
+          </Col>
         </Row>
+        {/* <Row>
+          <Col>
+            <GoogleBarGraph value={totalImages}
+                            title={"Total Seller Provided Item Images"}
+                            xaxis={"Total Images"}
+                            yaxis={"Frequency"}
+                            width={'400px'}
+                            height={'500px'}/>
+          </Col>
+          <Col>
+            <GoogleBarGraph value={shoeSizes}
+                            title={"Distribution of Adult Shoe Size"}
+                            xaxis={"Adult Shoe Size"}
+                            yaxis={"Frequency"}
+                            width={'800px'}
+                            height={'500px'}/>
+          </Col>
+
+        </Row>
+        <Row>
+          <Col>
+            <Histogram value={shoePrices}
+                       title={"Shoe Prices"}
+                       width={"800px"}
+                       height={"500px"}/>
+          </Col>
+          <Col>
+            <Histogram value={sellerRatings}
+                       title={"Seller Ratings"}
+                       width={"800px"}
+                       height={"500px"}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Histogram value={freScores}
+                       title={"Flesch Reading Ease Scores for Shoe Descriptions (complex descriptions have low scores)"}
+                       width={"800px"}
+                       height={"500px"}/>
+          </Col>
+          <Col>
+            <Histogram value={gradeScores}
+                       title={"Average Grade Readability Scores for Shoe Descriptions (complex descriptions have high scores)"}
+                       width={"800px"}
+                       height={"500px"}/>
+          </Col>
+        </Row> */}
       </Container>
     </div>
   );
