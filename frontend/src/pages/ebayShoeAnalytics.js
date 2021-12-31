@@ -10,6 +10,7 @@ import GoogleBarGraph from '../utils/google-bar-chart';
 import Histogram from '../utils/histogram';
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
+import ScatterChart from '../utils/scatter-trendline-chart';
 
 class DataVizType {
   static ALL = new DataVizType("all")
@@ -21,6 +22,51 @@ class DataVizType {
   }
 }
 
+function getFrequency(arr) {
+  const res = {};
+  const dates = new Set();
+  for (const num of arr) {
+    const d = new Date(num);
+    const month = (d.getMonth()).toString();
+    const day = (d.getDate()).toString();
+    const key = month + "/" + day;
+    dates.add(key);
+    if (res[key]) {
+      res[key] = res[key] + 1;
+    } else {
+      res[key] = 1;
+    }
+  }
+
+  const myIterator = dates.values();
+  const finalDates = new Set();
+  let text = "";
+  for (const entry of myIterator) {
+    text += entry + ",";
+
+    let index = entry.indexOf('/');
+    let month = entry.substring(0,index);
+    let day = entry.substring(index+1);
+    finalDates.add(new Date(2021,month,day));
+  }
+
+  let output = [];
+  for (const entry of finalDates) {
+    output.push(entry);
+  }
+  output.sort((date1, date2) => date1 - date2);
+  
+  const res2 = [["Date","Frequency"]]
+  for (let key of output) {
+    let formattedKey = key.getMonth() + "/" + key.getDate();
+    let temp = [formattedKey, res[formattedKey]];
+    res2.push(temp);
+  }
+  return res2;
+}
+
+
+
 export default function EbayShoeAnalytics() {
   const [shoeSizes, setShoeSizes] = React.useState([]); // for child comp
   const [freeShipping, setFreeShipping] = React.useState([]);
@@ -31,6 +77,8 @@ export default function EbayShoeAnalytics() {
   const [sellerRatings, setSellerRatings] = React.useState([]);
   const [freScores, setFreScores] = React.useState([]);
   const [gradeScores, setGradeScores] = React.useState([]);
+  const [soldDates, setSoldDates] = React.useState([]);
+
 
   const [dataVizType, setDataVizType] = React.useState(DataVizType.ALL);
 
@@ -63,6 +111,7 @@ export default function EbayShoeAnalytics() {
       axios.get("/item_description/avg_grade_score").then((response) => {
         setGradeScores(response.data);
       });
+      setSoldDates([]);
     } else if (dataVizType === DataVizType.SOLD) {
       axios.get("/size/adult?sold=True").then((response) => {
         setShoeSizes(response.data);
@@ -88,6 +137,9 @@ export default function EbayShoeAnalytics() {
       });
       axios.get("/item_description/avg_grade_score?sold=True").then((response) => {
         setGradeScores(response.data);
+      });
+      axios.get("/sold_dates").then((response) => {
+        setSoldDates(getFrequency(response.data));
       });
     } else {
       axios.get("/size/adult?sold=False").then((response) => {
@@ -117,22 +169,28 @@ export default function EbayShoeAnalytics() {
       axios.get("/item_description/avg_grade_score?sold=False").then((response) => {
         setGradeScores(response.data);
       });
+      setSoldDates([]);
     }
   }, [dataVizType]);
 
 
-  return (
-    <div>
-      <Navbar />
+  function SoldDataVizRender() {
+    if (dataVizType == DataVizType.SOLD) {
+      return <Row>
+      <Col>
+        <ScatterChart data={soldDates}/>
+      </Col>
+      <Col>
+        <PieChart value={freeShipping}
+                  title={"Free Shipping Offered"}
+                  feature1={"Free Shipping"}
+                  feature2={"No Free Shipping"}
+        />
+      </Col>
+    </Row>;
 
-      <DropdownButton id="dropdown-basic-button" title="Dropdown button">
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.ALL)}>All Shoes</Dropdown.Item>
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.NOTSOLD)}>Not sold Shoes</Dropdown.Item>
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.SOLD)}>Sold Shoes</Dropdown.Item>
-      </DropdownButton>
-
-      <Container>
-        <Row>
+    } else {
+      return <Row>
           <Col>
             <PieChart value={freeShipping}
                       title={"Free Shipping Offered"}
@@ -154,7 +212,22 @@ export default function EbayShoeAnalytics() {
                       feature2={"No Item Bid"}
             />
           </Col>
-        </Row>
+        </Row>;
+    }
+  }
+
+  return (
+    <div>
+      <Navbar />
+
+      <DropdownButton id="dropdown-basic-button" title="Shoe Filter" style={{marginLeft: "auto", marginRight:"auto"}}>
+        <Dropdown.Item onClick={() => setDataVizType(DataVizType.ALL)}>All Shoes</Dropdown.Item>
+        <Dropdown.Item onClick={() => setDataVizType(DataVizType.NOTSOLD)}>Not sold Shoes</Dropdown.Item>
+        <Dropdown.Item onClick={() => setDataVizType(DataVizType.SOLD)}>Sold Shoes</Dropdown.Item>
+      </DropdownButton>
+
+      <Container>
+        <SoldDataVizRender />
         <Row>
           <Col>
             <GoogleBarGraph value={totalImages}
