@@ -22,3 +22,10 @@ Refer this link for more info: https://realpython.com/flask-by-example-part-2-po
 - `\c hypebeast`: connects with a database
 - `\dt`: list of relations
 - `\d shoes`: shows table schema
+
+## DATA SCIENCE RESOURCES 
+- https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
+- https://towardsdatascience.com/data-cleaning-how-to-handle-missing-values-in-pandas-cc8570c446ec
+- https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/
+- https://medium.com/@szabo.bibor/how-to-create-a-seaborn-correlation-heatmap-in-python-834c0686b88e
+- https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
