@@ -29,3 +29,4 @@ Refer this link for more info: https://realpython.com/flask-by-example-part-2-po
 - https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/
 - https://medium.com/@szabo.bibor/how-to-create-a-seaborn-correlation-heatmap-in-python-834c0686b88e
 - https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
+- https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/
