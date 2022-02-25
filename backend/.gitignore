@@ -1,7 +1,7 @@
 soldItemUrls.csv
 soldItemUrls.txt
 migrations
-db/database.ini
+herokuDB/database.ini
 venv
 .DS_Store
 
