@@ -541,13 +541,105 @@ def delete_listing_record(listing_id):
         cur.execute(delete_listing_query)
         conn.commit()
         cur.close()
-
-        print(f"SUCCESS: Deleted listing record with listing_id <{listing_id}>")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+    except Exception as e:
+        print(str(e))
     finally:
         if conn is not None:
             conn.close()
+    return jsonify(f"SUCCESS: Deleted LISTING record with listing_id <{listing_id}>")
+
+@app.route("/get_all_listing_records", methods=['GET'])
+def get_all_listing_records():
+    listing_records = None
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        listing_sql_query = "SELECT price, free_shipping, images, sold, sold_date FROM listing;"
+        cur.execute(listing_sql_query)
+        listing_records = cur.fetchall()
+
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return(jsonify(listing_records))
+
+@app.route("/get_all_seller_records", methods=['GET'])
+def get_all_seller_records():
+    seller_records = None
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        seller_sql_query = """SELECT positive, neutral, negative, join_date,
+                                followers, positive_feedback FROM seller;"""
+        cur.execute(seller_sql_query)
+        seller_records = cur.fetchall()
+
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return(jsonify(seller_records))
+
+@app.route("/get_all_desc_records", methods=['GET'])
+def get_all_desc_records():
+    desc_records = None
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        desc_sql_query = "SELECT fre_score, avg_grade_score FROM description;"
+        cur.execute(desc_sql_query)
+        desc_records = cur.fetchall()
+
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return(jsonify(desc_records))
+
+@app.route("/get_all_size_records", methods=['GET'])
+def get_all_size_records():
+    size_records = None
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        size_sql_query = "SELECT shoe_size, adult_shoe, youth_shoe, child_shoe FROM size;"
+        cur.execute(size_sql_query)
+        size_records = cur.fetchall()
+
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return(jsonify(size_records))
 
 
 if __name__ == '__main__':
