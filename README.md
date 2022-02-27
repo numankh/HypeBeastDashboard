@@ -12,3 +12,9 @@ This is an analytics dashboard for eBay shoe resellers
 
 ### Start frontend
 `yarn start-frontend`
+
+## Exploratory Data Analysis (EDA)
+Look at `backend/eda/eda.ipynb`
+
+## Training Classification and Regression Models
+Look at `backend/ml-work/*
