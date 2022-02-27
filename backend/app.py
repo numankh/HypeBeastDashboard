@@ -334,8 +334,48 @@ def get_sold_dates():
     except Exception as e:
 	    return(str(e))
 
+@app.route("/add_seller", methods=['POST'])
+def add_seller():
+    conn = None
+    seller_id = None
+    payload = {
+        "username": request.form.get("username"),
+        "positive": request.form.get("positive"),
+        "neutral": request.form.get("neutral"),
+        "negative": request.form.get("negative"),
+        "join_date": request.form.get("join_date"),
+        "followers": request.form.get("followers"),
+        "positive_feedback": request.form.get("positive_feedback")
+    }
+
+    try:
+        # Connect to psql db
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        # Execute insert statement
+        seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback)
+            VALUES('{payload["username"]}', {payload["positive"]}, {payload["neutral"]}, {payload["negative"]},
+                    '{payload["join_date"]}', '{payload["followers"]}', {payload["positive_feedback"]}) RETURNING seller_id;"""
+        cur.execute(seller_insert_sql_query)
+        print("SUCCESS: Created SELLER record")
+        seller_id = cur.fetchone()[0]
+
+        # Close connection
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+
+    return jsonify(f"Created seller record for seller <{payload['username']}> with seller_id <{seller_id}>")
+
+
 @app.route("/add_shoe_listing", methods=['POST'])
-def shoe_listing_herokudb():
+def shoe_listing_herokudb(seller_id):
     payload = {
         "title": request.form.get("title"),
         "price": request.form.get("price"),
@@ -345,13 +385,6 @@ def shoe_listing_herokudb():
         "model": request.form.get("model"),
         "sold": request.form.get("sold"),
         "sold_date": request.form.get("sold_date"),
-        "username": request.form.get("username"),
-        "positive": request.form.get("positive"),
-        "neutral": request.form.get("neutral"),
-        "negative": request.form.get("negative"),
-        "join_date": request.form.get("join_date"),
-        "followers": request.form.get("followers"),
-        "positive_feedback": request.form.get("positive_feedback"),
         "fre_score": request.form.get("fre_score"),
         "avg_grade_score": request.form.get("avg_grade_score"),
         "shoe_size": request.form.get("shoe_size"),
@@ -368,27 +401,24 @@ def shoe_listing_herokudb():
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
 
-        listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date)
+        listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date, seller_id)
             VALUES('{payload["title"]}', {payload["price"]}, {payload["free_shipping"]}, {payload["images"]},
-                    '{payload["url"]}', '{payload["model"]}', {payload["sold"]}, '{payload["sold_date"]}') RETURNING listing_id;"""
+                    '{payload["url"]}', '{payload["model"]}', {payload["sold"]}, '{payload["sold_date"]}', {seller_id}) RETURNING listing_id;"""
         cur.execute(listing_insert_sql_query)
         print("SUCCESS: Created LISTING record")
         listing_id = cur.fetchone()[0]
 
-        seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback, listing_id)
-            VALUES('{payload["username"]}', {payload["positive"]}, {payload["neutral"]}, {payload["negative"]},
-                    '{payload["join_date"]}', '{payload["followers"]}', {payload["positive_feedback"]}, '{listing_id}');"""
         description_insert_sql_query = f"""INSERT INTO description(fre_score, avg_grade_score, listing_id)
             VALUES('{payload["fre_score"]}', {payload["avg_grade_score"]}, '{listing_id}');"""
         size_insert_sql_query = f"""INSERT INTO size(shoe_size, adult_shoe, youth_shoe, child_shoe, listing_id)
             VALUES('{payload["shoe_size"]}', {payload["adult_shoe"]}, {payload["youth_shoe"]}, {payload["child_shoe"]},
                     '{listing_id}');"""
 
-        insert_queries = [seller_insert_sql_query, description_insert_sql_query, size_insert_sql_query]
+        insert_queries = [description_insert_sql_query, size_insert_sql_query]
 
         for query in insert_queries:
             cur.execute(query)
-        print("SUCCESS: Created SELLER, DESC, SIZE records")
+        print("SUCCESS: Created DESC, SIZE records")
 
         conn.commit()
         cur.close()
@@ -438,8 +468,8 @@ def update_listing(listing_id):
     
     return jsonify(f"SUCCESS: Updated listing record with listing_id <{listing_id}>")
 
-@app.route("/update_seller_record/<listing_id>", methods=['PUT'])
-def update_seller_record(listing_id):
+@app.route("/update_seller_record/<seller_id>", methods=['PUT'])
+def update_seller_record(seller_id):
     conn = None
     payload = {
         "username": request.form.get("username"),
@@ -460,8 +490,8 @@ def update_seller_record(listing_id):
             SET username = '{payload["username"]}', positive = {payload["positive"]}, neutral = {payload["neutral"]},
             negative = {payload["negative"]}, join_date = '{payload["join_date"]}', followers = {payload["followers"]},
             positive_feedback = {payload["positive_feedback"]}
-            WHERE listing_id = '{listing_id}'
-            RETURNING listing_id;"""
+            WHERE seller_id = '{seller_id}'
+            RETURNING seller_id;"""
         cur.execute(update_seller_query)
         conn.commit()
         cur.close()
@@ -470,7 +500,41 @@ def update_seller_record(listing_id):
     finally:
         if conn is not None:
             conn.close()
-    return jsonify(f"SUCCESS: Updated seller record with listing_id <{listing_id}>")
+    return jsonify(f"SUCCESS: Updated seller record with seller_id <{seller_id}>")
+
+@app.route("/update_seller_record/username/<username>", methods=['PUT'])
+def update_seller_record_by_username(username):
+    conn = None
+    payload = {
+        "username": request.form.get("username"),
+        "positive": request.form.get("positive"),
+        "neutral": request.form.get("neutral"),
+        "negative": request.form.get("negative"),
+        "join_date": request.form.get("join_date"),
+        "followers": request.form.get("followers"),
+        "positive_feedback": request.form.get("positive_feedback")
+    }
+
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        update_seller_query = f"""UPDATE seller
+            SET username = '{payload["username"]}', positive = {payload["positive"]}, neutral = {payload["neutral"]},
+            negative = {payload["negative"]}, join_date = '{payload["join_date"]}', followers = {payload["followers"]},
+            positive_feedback = {payload["positive_feedback"]}
+            WHERE username = '{username}'
+            RETURNING username;"""
+        cur.execute(update_seller_query)
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        return(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+    return jsonify(f"SUCCESS: Updated seller record with username <{username}>")
 
 @app.route("/update_desc_record/<listing_id>", methods=['PUT'])
 def update_description_record(listing_id):
@@ -547,6 +611,25 @@ def delete_listing_record(listing_id):
         if conn is not None:
             conn.close()
     return jsonify(f"SUCCESS: Deleted LISTING record with listing_id <{listing_id}>")
+
+@app.route("/delete_seller/<seller_id>", methods=['DELETE'])
+def delete_seller_record(seller_id):
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+
+        delete_seller_query = f"""DELETE FROM seller WHERE seller_id = '{seller_id}';"""
+        cur.execute(delete_seller_query)
+        conn.commit()
+        cur.close()
+    except Exception as e:
+        print(str(e))
+    finally:
+        if conn is not None:
+            conn.close()
+    return jsonify(f"SUCCESS: Deleted SELLER record with seller_id <{seller_id}>")
 
 @app.route("/get_all_listing_records", methods=['GET'])
 def get_all_listing_records():

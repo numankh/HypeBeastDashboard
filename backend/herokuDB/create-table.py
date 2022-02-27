@@ -23,7 +23,11 @@ commands = (
         model VARCHAR,
         sold BOOLEAN,
         sold_date DATE,
-        PRIMARY KEY (listing_id)
+        seller_id UUID,
+        PRIMARY KEY (listing_id),
+        FOREIGN KEY (seller_id)
+            REFERENCES SELLER (seller_id)
+            ON UPDATE CASCADE ON DELETE CASCADE
     )
     """,
     """
@@ -50,6 +54,7 @@ commands = (
     """,
     """
     CREATE TABLE seller (
+        seller_id UUID DEFAULT uuid_generate_v4(),
         username VARCHAR,
         positive SERIAL,
         neutral SERIAL,
@@ -57,10 +62,7 @@ commands = (
         join_date DATE,
         followers SERIAL,
         positive_feedback SMALLSERIAL,
-        listing_id UUID,
-        FOREIGN KEY (listing_id)
-            REFERENCES LISTING (listing_id)
-            ON UPDATE CASCADE ON DELETE CASCADE
+        PRIMARY KEY (seller_id)
     )
     """
 )
