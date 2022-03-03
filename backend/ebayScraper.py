@@ -19,23 +19,6 @@ def isFloat(test_string):
         res = False
     return res
 
-def extractNumbers(test_string):
-    res = []
-    for word in test_string.split():
-        non_decimal = re.compile(r'[^\d.]+')
-        numeric_string = non_decimal.sub('', word)
-        if numeric_string.isdigit():
-            res.append(int(numeric_string))
-        elif isFloat(numeric_string):
-            res.append(float(numeric_string))
-    return res
-
-def shoeSizeOverride(test_string):
-    numbersFromTitle = extractNumbers(test_string)
-    for number in numbersFromTitle:
-        if number < 20:
-            return number
-
 def getSellerProfile(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -130,12 +113,12 @@ def getShoeSize(itemPageSoup, rawItemTitle):
 
 
     # TODO: Try to get shoe size from dropdown menu
-    # if(not shoeSize):
-    #     shoeSize = itemPageSoup.find('option', attrs = {'id':'msku-opt-0'})
-    #     if(shoeSize):
-    #         shoeSize = shoeSize.text
-    #         if("[" in shoeSize):
-    #             shoeSize = shoeSize[:shoeSize.index("[")]
+    if(not shoeSize):
+        shoeSize = itemPageSoup.find('select', attrs = {'name':'US Shoe Size'}).find('option', attrs = {'selected': 'selected'})
+        if(shoeSize):
+            shoeSize = shoeSize.text
+            if("[" in shoeSize):
+                shoeSize = shoeSize[:shoeSize.index("[")]
     # print(f"Scraping dropdown menu: <{shoeSize}>")
 
     # Check shoe booleans
@@ -246,7 +229,7 @@ def scrapeItemPage(item):
     # Obtain seller related information
     try:
         sellerProfileUrl = itemPageSoup.find('div', attrs = {'class':'ux-seller-section__item--seller'}).findAll('a')[0].get('href')
-        sellerRes = getSellerProfile(sellerProfileUrl)
+        res_seller_profile = getSellerProfile(sellerProfileUrl)
     except:
         print(f"Error with obtaining seller profile URL")
         return {}
@@ -289,9 +272,8 @@ def scrapeItemPage(item):
         "sold": False
     }
 
-    itemData.update(sellerRes)
+    itemData.update(res_seller_profile)
     itemData.update(res_shoe_size)
-
     print(itemData)
     rows.append(itemData)
     print("===========================")
