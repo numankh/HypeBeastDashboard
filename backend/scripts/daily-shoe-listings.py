@@ -57,9 +57,9 @@ def insert_data(shoe_listings):
             seller_id = cur.fetchone()
             if (not seller_id):
                 print("Seller does not exist")
-                seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback)
+                seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback, created_date)
                     VALUES('{shoe_listing["username"]}', {shoe_listing["positive"]}, {shoe_listing["neutral"]}, {shoe_listing["negative"]},
-                            '{shoe_listing["join_date"]}', '{shoe_listing["followers"]}', {shoe_listing["positive_feedback"]}) RETURNING seller_id;"""
+                            '{shoe_listing["join_date"]}', '{shoe_listing["followers"]}', {shoe_listing["positive_feedback"]}, '{date.today()}') RETURNING seller_id;"""
                 cur.execute(seller_insert_sql_query)
                 print("SUCCESS: Created SELLER record")
                 seller_id = cur.fetchone()[0]
@@ -68,20 +68,21 @@ def insert_data(shoe_listings):
             print(f"SELLER ID: <{seller_id}>")
 
             # Create shoe listing record and generate a listing_id
-            listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date, seller_id)
+            listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date, seller_id, created_date)
             VALUES('{shoe_listing["item_name"]}', {shoe_listing["item_price"]}, {shoe_listing["free_shipping"]}, {shoe_listing["number_of_images"]},
-                    '{shoe_listing["item_url"]}', '{shoe_listing["model"]}', {shoe_listing["sold"]}, {shoe_listing["sold_date"]}, '{seller_id}') RETURNING listing_id;"""
+                    '{shoe_listing["item_url"]}', '{shoe_listing["model"]}', {shoe_listing["sold"]}, {shoe_listing["sold_date"]}, '{seller_id}',
+                    '{date.today()}') RETURNING listing_id;"""
             cur.execute(listing_insert_sql_query)
             print("SUCCESS: Created LISTING record")
             listing_id = cur.fetchone()[0]
             print(f"LISTING ID: <{listing_id}>")
 
             # Create description and size records
-            description_insert_sql_query = f"""INSERT INTO description(fre_score, avg_grade_score, listing_id)
-                VALUES('{shoe_listing["desc_fre_score"]}', {shoe_listing["desc_avg_grade_score"]}, '{listing_id}');"""
-            size_insert_sql_query = f"""INSERT INTO size(shoe_size, adult_shoe, youth_shoe, child_shoe, listing_id)
+            description_insert_sql_query = f"""INSERT INTO description(fre_score, avg_grade_score, listing_id, created_date)
+                VALUES('{shoe_listing["desc_fre_score"]}', {shoe_listing["desc_avg_grade_score"]}, '{listing_id}', '{date.today()}');"""
+            size_insert_sql_query = f"""INSERT INTO size(shoe_size, adult_shoe, youth_shoe, child_shoe, listing_id, created_date)
                 VALUES('{shoe_listing["shoe_size"]}', {shoe_listing["adult_shoe"]}, {shoe_listing["youth_shoe"]}, {shoe_listing["child_shoe"]},
-                        '{listing_id}');"""
+                        '{listing_id}', '{date.today()}');"""
             insert_queries = [description_insert_sql_query, size_insert_sql_query]
             for query in insert_queries:
                 cur.execute(query)
