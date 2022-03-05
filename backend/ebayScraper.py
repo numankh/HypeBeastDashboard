@@ -268,7 +268,7 @@ def scrapeItemPage(item):
         "desc_avg_grade_score": desc_avg_grade_score,
         "item_url": itemUrl,
         "model": "Air Jordan 1 Retro High OG Dark Marina Blue",
-        "sold_date": None,
+        "sold_date": "NULL",
         "sold": False
     }
 
@@ -291,6 +291,8 @@ def ebayScraper(shoe_name):
         
         items = soup.findAll('div', attrs = {'class':'s-item__info clearfix'})
         # items = soup.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'})
+
+        x = 0
         if (items):
             for item in items:
                 itemUrl = item.find('a', attrs = {'class':'s-item__link'}).get('href')
@@ -302,10 +304,12 @@ def ebayScraper(shoe_name):
                     continue
                 else:
                     scrapeItemPage(item)
+                    x = x + 1
+
+                    if (x==3):
+                        break
         else:
             print("ERROR: unable to scrape item list page")
-
-        break
     return rows
 
 if __name__ == "__main__":

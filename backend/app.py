@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 # from models import db
 import os
-from ebayScraper import ebayScraperMain
+from ebayScraper import ebayScraper
 from testItemSoldScraper import main
 import time
 from itertools import groupby
