@@ -50,42 +50,49 @@ def insert_data(shoe_listings):
         cur = conn.cursor()
 
         for shoe_listing in shoe_listings:
+            if (shoe_listing != {}):
+                # Check if a seller record exists. If not, create a new record and generate seller_id
+                exists_seller_query = f"""SELECT seller_id from seller where username='{shoe_listing["username"]}';"""
+                cur.execute(exists_seller_query)
+                seller_id = cur.fetchone()
+                if (not seller_id):
+                    print("Seller does not exist")
+                    seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback, created_date)
+                        VALUES('{shoe_listing["username"]}', {shoe_listing["positive"]}, {shoe_listing["neutral"]}, {shoe_listing["negative"]},
+                                '{shoe_listing["join_date"]}', '{shoe_listing["followers"]}', {shoe_listing["positive_feedback"]}, '{date.today()}') RETURNING seller_id;"""
+                    cur.execute(seller_insert_sql_query)
+                    print("SUCCESS: Created SELLER record")
+                    seller_id = cur.fetchone()[0]
+                else:
+                    seller_id = seller_id[0]
+                print(f"SELLER ID: <{seller_id}>")
 
-            # Check if a seller record exists. If not, create a new record and generate seller_id
-            exists_seller_query = f"""SELECT seller_id from seller where username='{shoe_listing["username"]}';"""
-            cur.execute(exists_seller_query)
-            seller_id = cur.fetchone()
-            if (not seller_id):
-                print("Seller does not exist")
-                seller_insert_sql_query = f"""INSERT INTO seller(username, positive, neutral, negative, join_date, followers, positive_feedback, created_date)
-                    VALUES('{shoe_listing["username"]}', {shoe_listing["positive"]}, {shoe_listing["neutral"]}, {shoe_listing["negative"]},
-                            '{shoe_listing["join_date"]}', '{shoe_listing["followers"]}', {shoe_listing["positive_feedback"]}, '{date.today()}') RETURNING seller_id;"""
-                cur.execute(seller_insert_sql_query)
-                print("SUCCESS: Created SELLER record")
-                seller_id = cur.fetchone()[0]
-            else:
-                seller_id = seller_id[0]
-            print(f"SELLER ID: <{seller_id}>")
+                # Create shoe listing record and generate a listing_id
+                listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date, seller_id, created_date)
+                VALUES('{shoe_listing["item_name"]}', {shoe_listing["item_price"]}, {shoe_listing["free_shipping"]}, {shoe_listing["number_of_images"]},
+                        '{shoe_listing["item_url"]}', '{shoe_listing["model"]}', {shoe_listing["sold"]}, {shoe_listing["sold_date"]}, '{seller_id}',
+                        '{date.today()}') RETURNING listing_id;"""
+                cur.execute(listing_insert_sql_query)
+                print("SUCCESS: Created LISTING record")
+                listing_id = cur.fetchone()[0]
+                print(f"LISTING ID: <{listing_id}>")
 
-            # Create shoe listing record and generate a listing_id
-            listing_insert_sql_query = f"""INSERT INTO listing(title, price, free_shipping, images, url, model, sold, sold_date, seller_id, created_date)
-            VALUES('{shoe_listing["item_name"]}', {shoe_listing["item_price"]}, {shoe_listing["free_shipping"]}, {shoe_listing["number_of_images"]},
-                    '{shoe_listing["item_url"]}', '{shoe_listing["model"]}', {shoe_listing["sold"]}, {shoe_listing["sold_date"]}, '{seller_id}',
-                    '{date.today()}') RETURNING listing_id;"""
-            cur.execute(listing_insert_sql_query)
-            print("SUCCESS: Created LISTING record")
-            listing_id = cur.fetchone()[0]
-            print(f"LISTING ID: <{listing_id}>")
+                # Create description and size records
+                description_insert_sql_query = f"""INSERT INTO description(fre_score, avg_grade_score, listing_id, created_date)
+                    VALUES('{shoe_listing["desc_fre_score"]}', {shoe_listing["desc_avg_grade_score"]}, '{listing_id}', '{date.today()}');"""
 
-            # Create description and size records
-            description_insert_sql_query = f"""INSERT INTO description(fre_score, avg_grade_score, listing_id, created_date)
-                VALUES('{shoe_listing["desc_fre_score"]}', {shoe_listing["desc_avg_grade_score"]}, '{listing_id}', '{date.today()}');"""
-            size_insert_sql_query = f"""INSERT INTO size(shoe_size, adult_shoe, youth_shoe, child_shoe, listing_id, created_date)
-                VALUES('{shoe_listing["shoe_size"]}', {shoe_listing["adult_shoe"]}, {shoe_listing["youth_shoe"]}, {shoe_listing["child_shoe"]},
-                        '{listing_id}', '{date.today()}');"""
-            insert_queries = [description_insert_sql_query, size_insert_sql_query]
-            for query in insert_queries:
-                cur.execute(query)
+                if (shoe_listing["shoe_size"]):
+                    size_insert_sql_query = f"""INSERT INTO size(shoe_size, adult_shoe, youth_shoe, child_shoe, listing_id, created_date)
+                        VALUES({shoe_listing["shoe_size"]}, {shoe_listing["adult_shoe"]}, {shoe_listing["youth_shoe"]}, {shoe_listing["child_shoe"]},
+                                '{listing_id}', '{date.today()}');"""
+                else:
+                    size_insert_sql_query = f"""INSERT INTO size(adult_shoe, youth_shoe, child_shoe, listing_id, created_date)
+                        VALUES({shoe_listing["adult_shoe"]}, {shoe_listing["youth_shoe"]}, {shoe_listing["child_shoe"]},
+                                '{listing_id}', '{date.today()}');"""
+
+                insert_queries = [description_insert_sql_query, size_insert_sql_query]
+                for query in insert_queries:
+                    cur.execute(query)
 
 
         conn.commit()

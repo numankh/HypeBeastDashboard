@@ -138,7 +138,10 @@ def getShoeSize(itemPageSoup, rawItemTitle):
                 break
 
     # print(f"FINAL SHOE SIZE: <{shoeSize}>")
-    
+
+    if (shoeSize):
+        shoeSize = float(shoeSize)
+
     return {
         "shoe_size": shoeSize,
         "adult_shoe": adult_shoe,
@@ -279,7 +282,7 @@ def scrapeItemPage(item):
     print("===========================")
 
 def ebayScraper(shoe_name):
-    for pageNumber in range(1,2):
+    for pageNumber in range(1,6):
         # Obtain ebay search url for the shoe name provided
         processed_shoe_name = shoe_name.replace(" ","+")
         URL = f"https://www.ebay.com/sch/i.html?_nkw={processed_shoe_name}&_pgn={pageNumber}"
@@ -290,9 +293,6 @@ def ebayScraper(shoe_name):
         print(f"Currently scraping this url: <{URL}>")
         
         items = soup.findAll('div', attrs = {'class':'s-item__info clearfix'})
-        # items = soup.findAll('li', attrs = {'class':'s-item s-item__pl-on-bottom s-item--watch-at-corner'})
-
-        x = 0
         if (items):
             for item in items:
                 itemUrl = item.find('a', attrs = {'class':'s-item__link'}).get('href')
@@ -304,10 +304,6 @@ def ebayScraper(shoe_name):
                     continue
                 else:
                     scrapeItemPage(item)
-                    x = x + 1
-
-                    if (x==3):
-                        break
         else:
             print("ERROR: unable to scrape item list page")
     return rows
