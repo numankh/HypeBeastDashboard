@@ -21,7 +21,8 @@ def hello():
 
 @app.route('/time')
 def get_current_time():
-    return {'time': time.time()}
+    res = {'time': time.time()}
+    return jsonify(res)
 
 """
 Routes for PostgresQL database
@@ -295,10 +296,11 @@ def update_size_record(listing_id):
 """
 READ APIs
 """
-@app.route("/get_all_listing_records", methods=['GET'])
-def get_all_listing_records():
+@app.route("/GetBulkShoeListings", methods=['GET'])
+def get_bulk_shoe_listings():
     listing_records = None
     conn = None
+    res = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
@@ -307,7 +309,16 @@ def get_all_listing_records():
         listing_sql_query = "SELECT listing_id, seller_id, price, free_shipping, images, sold, sold_date FROM listing;"
         cur.execute(listing_sql_query)
         listing_records = cur.fetchall()
-
+        
+        for listing_record in listing_records:
+            listing_dict = {
+                "price": listing_record[2],
+                "free_shipping": listing_record[3],
+                "images": listing_record[4],
+                "sold": listing_record[5],
+                "sold_date": listing_record[6]
+            }
+            res.append(listing_dict)
         conn.commit()
         cur.close()
     except Exception as e:
@@ -316,7 +327,7 @@ def get_all_listing_records():
         if conn is not None:
             conn.close()
 
-    return(jsonify(listing_records))
+    return(jsonify(res))
 
 @app.route("/get_listing/<listing_id>", methods=['GET'])
 def get_all_listing_records_id(listing_id):
@@ -342,10 +353,11 @@ def get_all_listing_records_id(listing_id):
 
     return(jsonify(listing_records))
 
-@app.route("/get_all_seller_records", methods=['GET'])
+@app.route("/GetBulkSellers", methods=['GET'])
 def get_all_seller_records():
     seller_records = None
     conn = None
+    res = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
@@ -356,6 +368,16 @@ def get_all_seller_records():
         cur.execute(seller_sql_query)
         seller_records = cur.fetchall()
 
+        for seller_record in seller_records:
+            seller_dict = {
+                "positive": seller_record[2],
+                "neutral": seller_record[3],
+                "negative": seller_record[4],
+                "join_date": seller_record[5],
+                "followers": seller_record[6],
+                "positive_feedback": seller_record[7]
+            }
+            res.append(seller_dict)
         conn.commit()
         cur.close()
     except Exception as e:
@@ -364,7 +386,7 @@ def get_all_seller_records():
         if conn is not None:
             conn.close()
 
-    return(jsonify(seller_records))
+    return(jsonify(res))
 
 @app.route("/get_seller_record/<username>", methods=['GET'])
 def get_seller_record_username(username):
@@ -414,10 +436,11 @@ def get_seller_record_id(seller_id):
 
     return(jsonify(seller_records))
 
-@app.route("/get_all_desc_records", methods=['GET'])
+@app.route("/GetDescData", methods=['GET'])
 def get_all_desc_records():
     desc_records = None
     conn = None
+    res = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
@@ -427,6 +450,12 @@ def get_all_desc_records():
         cur.execute(desc_sql_query)
         desc_records = cur.fetchall()
 
+        for desc_record in desc_records:
+            desc_dict = {
+                "fre_score": desc_record[0],
+                "avg_grade_score": desc_record[1],
+            }
+            res.append(desc_dict)
         conn.commit()
         cur.close()
     except Exception as e:
@@ -435,12 +464,13 @@ def get_all_desc_records():
         if conn is not None:
             conn.close()
 
-    return(jsonify(desc_records))
+    return(jsonify(res))
 
-@app.route("/get_all_size_records", methods=['GET'])
+@app.route("/GetBulkSizeData", methods=['GET'])
 def get_all_size_records():
     size_records = None
     conn = None
+    res = []
     try:
         params = config()
         conn = psycopg2.connect(**params)
@@ -450,6 +480,15 @@ def get_all_size_records():
         cur.execute(size_sql_query)
         size_records = cur.fetchall()
 
+        for size_record in size_records:
+            size_dict = {
+                "shoe_size": size_record[0],
+                "adult_shoe": size_record[1],
+                "youth_shoe": size_record[2],
+                "child_shoe": size_record[3]
+            }
+            res.append(size_dict)
+
         conn.commit()
         cur.close()
     except Exception as e:
@@ -458,7 +497,7 @@ def get_all_size_records():
         if conn is not None:
             conn.close()
 
-    return(jsonify(size_records))
+    return(jsonify(res))
 
 """
 DELETE APIs

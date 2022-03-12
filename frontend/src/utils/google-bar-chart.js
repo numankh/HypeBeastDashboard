@@ -3,7 +3,7 @@ import React from 'react';
 import '../../node_modules/react-vis/dist/style.css';
 import { Chart } from "react-google-charts";
 
-const getFrequency = (array) => {
+const getFrequency = (valueName, array) => {
     const map = {};
     array.forEach(item => {
        if(map[item]){
@@ -19,7 +19,7 @@ const getFrequency = (array) => {
       });
 
     
-    const res = [["test", "test2"]]
+    const res = [["test", valueName]]
     sorted.forEach(function (item, index) {
         res.push([item, map[item]]);
     });
@@ -27,7 +27,7 @@ const getFrequency = (array) => {
  };
 
 export default function GoogleBarChart(props) {
-    const data = getFrequency(props.value)
+    const data = getFrequency(props.yaxis, props.value)
 
     return (
         <div>

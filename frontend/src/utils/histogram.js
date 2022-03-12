@@ -19,8 +19,8 @@ export default function Histogram(props) {
     return (
         <div>
             <Chart
-                width={'500px'}
-                height={'300px'}
+                width={props.width}
+                height={props.height}
                 chartType="Histogram"
                 loader={<div>Loading Chart</div>}
                 data={data}

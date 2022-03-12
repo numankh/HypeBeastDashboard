@@ -11,6 +11,7 @@ import Histogram from '../utils/histogram';
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import ScatterChart from '../utils/scatter-trendline-chart';
+import LineChart from '../utils/line-chart';
 
 class DataVizType {
   static ALL = new DataVizType("all")
@@ -68,166 +69,216 @@ function getFrequency(arr) {
 
 
 export default function EbayShoeAnalytics() {
-  const [shoeSizes, setShoeSizes] = React.useState([]); // for child comp
-  const [freeShipping, setFreeShipping] = React.useState([]);
-  const [itemOffer, setItemOffer] = React.useState([]);
-  const [itemBid, setItemBid] = React.useState([]);
-  const [totalImages, setTotalImages] = React.useState([]);
-  const [shoePrices, setShoePrices] = React.useState([]);
-  const [sellerRatings, setSellerRatings] = React.useState([]);
-  const [freScores, setFreScores] = React.useState([]);
-  const [gradeScores, setGradeScores] = React.useState([]);
-  const [soldDates, setSoldDates] = React.useState([]);
+  const [priceData, setPriceData] = React.useState([]);
+  const [freeShippingData, setFreeShippingData] = React.useState([]);
+  const [imagesData, setImagesData] = React.useState([]);
 
+  const [shoeSizeData, setShoeSizeData] = React.useState([]);
+  const [ageGroupData, setAgeGroupData] = React.useState([]);
 
-  const [dataVizType, setDataVizType] = React.useState(DataVizType.ALL);
+  const [freScoreData, setFreScoreData] = React.useState([]);
+  const [avgGradeScoreData, setAvgGradeScoreData] = React.useState([]);
+
+  const [recentFeedbackData, setRecentFeedbackData] = React.useState([]);
+  const [allJoinDateData, setAllJoinDateData] = React.useState([]);
+  const [followersData, setFollowersData] = React.useState([]);
+  const [followersBelow2000Data, setFollowersBelow2000Data] = React.useState([]);
+  const [overallFeedbackData, setOverallFeedbackData] = React.useState([]);
 
   React.useEffect(() => {
-    if (dataVizType === DataVizType.ALL) {
-      axios.get("/size/adult").then((response) => {
-        setShoeSizes(response.data);
-      });
-      axios.get("/free_shipping").then((response) => {
-        setFreeShipping(response.data);
-      });
-      axios.get("/item_offer").then((response) => {
-        setItemOffer(response.data);
-      });
-      axios.get("/item_bid").then((response) => {
-        setItemBid(response.data);
-      });
-      axios.get("/total_item_images").then((response) => {
-        setTotalImages(response.data);
-      });
-      axios.get("/price").then((response) => {
-        setShoePrices(response.data);
-      });
-      axios.get("/seller_rating").then((response) => {
-        setSellerRatings(response.data);
-      });
-      axios.get("/item_description/fre_score").then((response) => {
-        setFreScores(response.data);
-      });
-      axios.get("/item_description/avg_grade_score").then((response) => {
-        setGradeScores(response.data);
-      });
-      setSoldDates([]);
-    } else if (dataVizType === DataVizType.SOLD) {
-      axios.get("/size/adult?sold=True").then((response) => {
-        setShoeSizes(response.data);
-      });
-      axios.get("/free_shipping?sold=True").then((response) => {
-        setFreeShipping(response.data);
-      });
+    axios.get("/GetBulkSizeData").then((response) => {
+      let shoeSize = [];
+      let ageGroupStrings = [];
 
-      setItemOffer([]);
-      setItemBid([]);
-     
-      axios.get("/total_item_images?sold=True").then((response) => {
-        setTotalImages(response.data);
-      });
-      axios.get("/price?sold=True").then((response) => {
-        setShoePrices(response.data);
-      });
-      axios.get("/seller_rating?sold=True").then((response) => {
-        setSellerRatings(response.data);
-      });
-      axios.get("/item_description/fre_score?sold=True").then((response) => {
-        setFreScores(response.data);
-      });
-      axios.get("/item_description/avg_grade_score?sold=True").then((response) => {
-        setGradeScores(response.data);
-      });
-      axios.get("/sold_dates").then((response) => {
-        setSoldDates(getFrequency(response.data));
-      });
-    } else {
-      axios.get("/size/adult?sold=False").then((response) => {
-        setShoeSizes(response.data);
-      });
-      axios.get("/free_shipping?sold=False").then((response) => {
-        setFreeShipping(response.data);
-      });
-      axios.get("/item_offer?sold=False").then((response) => {
-        setItemOffer(response.data);
-      });
-      axios.get("/item_bid?sold=False").then((response) => {
-        setItemBid(response.data);
-      });
-      axios.get("/total_item_images?sold=False").then((response) => {
-        setTotalImages(response.data);
-      });
-      axios.get("/price?sold=False").then((response) => {
-        setShoePrices(response.data);
-      });
-      axios.get("/seller_rating?sold=False").then((response) => {
-        setSellerRatings(response.data);
-      });
-      axios.get("/item_description/fre_score?sold=False").then((response) => {
-        setFreScores(response.data);
-      });
-      axios.get("/item_description/avg_grade_score?sold=False").then((response) => {
-        setGradeScores(response.data);
-      });
-      setSoldDates([]);
-    }
-  }, [dataVizType]);
+      for (let seller of response.data) {
+        shoeSize.push(seller.shoe_size);
+        if (seller.adult_shoe) {
+          ageGroupStrings.push("Adult");
+        } else if (seller.child_shoe) {
+          ageGroupStrings.push("Child");
+        } else if (seller.youth_shoe) {
+          ageGroupStrings.push("Youth");
+        }
+      }
+      setShoeSizeData(shoeSize);
+      setAgeGroupData(ageGroupStrings);
+    });
 
+    axios.get("/GetBulkShoeListings").then((response) => {
+      let price = []
+      let free_shipping = []
+      let images = []
 
-  function SoldDataVizRender() {
-    if (dataVizType == DataVizType.SOLD) {
-      return <Row>
-      <Col>
-        <ScatterChart data={soldDates}/>
-      </Col>
-      <Col>
-        <PieChart value={freeShipping}
-                  title={"Free Shipping Offered"}
-                  feature1={"Free Shipping"}
-                  feature2={"No Free Shipping"}
-        />
-      </Col>
-    </Row>;
+      for (let shoeListing of response.data) {
+        price.push(shoeListing.price);
+        free_shipping.push(shoeListing.free_shipping);
+        images.push(shoeListing.images);
+      }
+      setPriceData(price);
+      setFreeShippingData(free_shipping);
+      setImagesData(images);
+    });
 
-    } else {
-      return <Row>
-          <Col>
-            <PieChart value={freeShipping}
-                      title={"Free Shipping Offered"}
-                      feature1={"Free Shipping"}
-                      feature2={"No Free Shipping"}
-            />
-          </Col>
-          <Col>
-            <PieChart value={itemOffer}
-                      title={"Item Offer Provided"}
-                      feature1={"Item Offer"}
-                      feature2={"No Item Offer"}
-            />
-          </Col>
-          <Col>
-            <PieChart value={itemBid}
-                      title={"Item Bid Provided"}
-                      feature1={"Item Bid"}
-                      feature2={"No Item Bid"}
-            />
-          </Col>
-        </Row>;
-    }
-  }
+    axios.get("/GetBulkSellers").then((response) => {
+      let recent_feedback = []
+      let join_date = []
+      let followers = []
+      let followers_below_2000 = []
+      let overall_feedback = []
+
+      for (let seller of response.data) {
+        let recent_feedback_total = seller.positive + seller.neutral + seller.negative;
+        recent_feedback.push(Math.round((seller.positive/recent_feedback_total)*100));
+       
+        let date = new Date(seller.join_date);
+        join_date.push(date.getFullYear());
+
+        if (seller.followers < 2000) {
+          followers_below_2000.push(seller.followers);
+        }
+        followers.push(seller.followers);
+
+        overall_feedback.push(seller.positive_feedback);
+      }
+      setRecentFeedbackData(recent_feedback);
+      setAllJoinDateData(join_date);
+      setFollowersData(followers);
+      setOverallFeedbackData(overall_feedback);
+      setFollowersBelow2000Data(followers_below_2000);
+    });
+
+    axios.get("/GetDescData").then((response) => {
+      let fre_score = []
+      let avg_grade_score = []
+
+      for (let desc of response.data) {
+        fre_score.push(desc.fre_score);
+        avg_grade_score.push(desc.avg_grade_score);
+      }
+      setFreScoreData(fre_score);
+      setAvgGradeScoreData(avg_grade_score);
+    });
+    
+  }, []);
 
   return (
     <div>
       <Navbar />
+      <Container>
+        <Row>
+          <h2>General Shoe Listing Graphs</h2>
+          <Col>
+            <Histogram value={priceData}
+                        title={"Shoe Prices"}
+                        width={"400px"}
+                        height={"300px"}/>
+          </Col>
+          <Col>
+            <GoogleBarGraph value={freeShippingData}
+                            title={"Free Shipping Offered"}
+                            xaxis={"Free Shipping"}
+                            yaxis={"Frequency"}
+                            width={'200px'}
+                            height={'300px'}/>
+          </Col>
+          <Col>
+            <GoogleBarGraph value={imagesData}
+                            title={"Number of Images on a Shoe Listing"}
+                            xaxis={"Number of Images"}
+                            yaxis={"Frequency"}
+                            width={'300px'}
+                            height={'300px'}/>
+          </Col>
+        </Row>
 
-      <DropdownButton id="dropdown-basic-button" title="Shoe Filter" style={{marginLeft: "auto", marginRight:"auto"}}>
+        <h2>Shoe Size Graphs</h2>
+        <Row>
+          <Col>
+            <GoogleBarGraph value={shoeSizeData}
+                            title={"Shoe Sizes"}
+                            xaxis={"Shoe Size"}
+                            yaxis={"Frequency"}
+                            width={'800px'}
+                            height={'300px'}/>
+          </Col>
+          <Col>
+            <GoogleBarGraph value={ageGroupData}
+                            title={"Age Group for Shoes"}
+                            xaxis={"Age Group"}
+                            yaxis={"Frequency"}
+                            width={'300px'}
+                            height={'300px'}/>
+          </Col>
+        </Row>
+
+        <h2>Item Description Readability Graphs</h2>
+        <Row>
+          <Col>
+            <Histogram value={freScoreData}
+                        title={"FRE Scores of Shoe Listing Descriptions"}
+                        width={"600px"}
+                        height={"300px"}/>
+          </Col>
+          <Col>
+            <Histogram value={avgGradeScoreData}
+                        title={"Average Readability of Shoe Listing Descriptions"}
+                        width={"600px"}
+                        height={"300px"}/>
+          </Col>
+        </Row>
+
+        <h2>Seller Graphs</h2>
+        <Row>
+          <Col>
+            <Histogram value={followersData}
+                        title={"Seller Followers"}
+                        width={"300px"}
+                        height={"300px"}/>
+          </Col>
+          <Col>
+            <Histogram value={followersBelow2000Data}
+                        title={"Seller Followers Below 2000"}
+                        width={"300px"}
+                        height={"300px"}/>
+          </Col>
+          <Col>
+            <Histogram value={overallFeedbackData}
+                        title={"Overall Positive Feedback"}
+                        width={"300px"}
+                        height={"300px"}/>
+          </Col>
+          <Col>
+            <Histogram value={recentFeedbackData}
+                        title={"Positive Feedback for the Past Year"}
+                        width={"300px"}
+                        height={"300px"}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <LineChart value={allJoinDateData}
+                      title={"Frequency of Ebay Join-Dates for Shoe Resellers"}
+                      width={"300px"}
+                      height={"400px"}
+                      yaxis={"Frequency"}/>
+          </Col>
+        </Row>
+
+        
+      </Container>
+
+      {/* <p>{sellerData[0].username}</p>
+      <p>{shoeListingData[0].images}</p> */}
+
+
+
+      {/* <DropdownButton id="dropdown-basic-button" title="Shoe Filter" style={{marginLeft: "auto", marginRight:"auto"}}>
         <Dropdown.Item onClick={() => setDataVizType(DataVizType.ALL)}>All Shoes</Dropdown.Item>
         <Dropdown.Item onClick={() => setDataVizType(DataVizType.NOTSOLD)}>Not sold Shoes</Dropdown.Item>
         <Dropdown.Item onClick={() => setDataVizType(DataVizType.SOLD)}>Sold Shoes</Dropdown.Item>
-      </DropdownButton>
-
+      </DropdownButton> */}
+{/* 
       <Container>
-        <SoldDataVizRender />
         <Row>
           <Col>
             <GoogleBarGraph value={totalImages}
@@ -275,7 +326,7 @@ export default function EbayShoeAnalytics() {
                        height={"500px"}/>
           </Col>
         </Row>
-      </Container>
+      </Container> */}
 
       {/* <ul>{listItems}</ul> */}
     </div>
