@@ -3,13 +3,20 @@ from flask_cors import CORS #comment this on deployment
 import os
 import time
 import psycopg2
-from herokuDB.config import config
 
 """
 Basic app setup
 """
-app = Flask(__name__)
-CORS(app) #comment this on deployment
+app = Flask(__name__, static_url_path='', static_folder='frontend/build')
+# CORS(app) #comment this on deployment
+
+def config():
+    conn = psycopg2.connect(
+        host=os.environ['HOST'],
+        database=os.environ['DATABASE'],
+        user=os.environ['USER'],
+        password=os.environ['PASSWORD'])
+    return conn
 
 """
 Flask test routes

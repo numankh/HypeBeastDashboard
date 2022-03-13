@@ -86,7 +86,7 @@ export default function EbayShoeAnalytics() {
   const [overallFeedbackData, setOverallFeedbackData] = React.useState([]);
 
   React.useEffect(() => {
-    axios.get("https://hypebeastdashboard.herokuapp.com/GetBulkSizeData").then((response) => {
+    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkSizeData").then((response) => {
       let shoeSize = [];
       let ageGroupStrings = [];
 
@@ -104,7 +104,7 @@ export default function EbayShoeAnalytics() {
       setAgeGroupData(ageGroupStrings);
     });
 
-    axios.get("https://hypebeastdashboard.herokuapp.com/GetBulkShoeListings").then((response) => {
+    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkShoeListings").then((response) => {
       let price = []
       let free_shipping = []
       let images = []
@@ -119,7 +119,7 @@ export default function EbayShoeAnalytics() {
       setImagesData(images);
     });
 
-    axios.get("https://hypebeastdashboard.herokuapp.com/GetBulkSellers").then((response) => {
+    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkSellers").then((response) => {
       let recent_feedback = []
       let join_date = []
       let followers = []
@@ -147,7 +147,7 @@ export default function EbayShoeAnalytics() {
       setFollowersBelow2000Data(followers_below_2000);
     });
 
-    axios.get("https://hypebeastdashboard.herokuapp.com/GetDescData").then((response) => {
+    axios.get("https://hypebeasthelper.herokuapp.com/GetDescData").then((response) => {
       let fre_score = []
       let avg_grade_score = []
 
