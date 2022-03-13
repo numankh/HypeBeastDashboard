@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS #comment this on deployment
 import os
 import time
@@ -11,24 +11,21 @@ app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 # CORS(app) #comment this on deployment
 
 def config():
-    conn = psycopg2.connect(
-        host=os.environ['HOST'],
-        database=os.environ['DATABASE'],
-        user=os.environ['USER'],
-        password=os.environ['PASSWORD'])
-    return conn
+    try:
+        conn = psycopg2.connect(
+            host=os.environ['HOST'],
+            database=os.environ['DATABASE'],
+            user=os.environ['USER'],
+            password=os.environ['PASSWORD'],
+            port=os.environ('PORT'))
+        return conn
+    except Exception as e:
+        print(str(e))
+        return None
 
-"""
-Flask test routes
-"""
-@app.route('/')
-def hello():
-    return "Hello World!"
-
-@app.route('/time')
-def get_current_time():
-    res = {'time': time.time()}
-    return jsonify(res)
+@app.route("/", defaults={'path':''})
+def serve(path):
+    return send_from_directory(app.static_folder,'index.html')
 
 """
 Routes for PostgresQL database
@@ -308,8 +305,7 @@ def get_bulk_shoe_listings():
     conn = None
     res = []
     try:
-        params = config()
-        conn = psycopg2.connect(**params)
+        conn = config()
         cur = conn.cursor()
 
         listing_sql_query = "SELECT listing_id, seller_id, price, free_shipping, images, sold, sold_date FROM listing;"
@@ -365,8 +361,7 @@ def get_all_seller_records():
     conn = None
     res = []
     try:
-        params = config()
-        conn = psycopg2.connect(**params)
+        conn = config()
         cur = conn.cursor()
 
         seller_sql_query = """SELECT seller_id, username, positive, neutral, negative, join_date,
@@ -448,8 +443,7 @@ def get_all_desc_records():
     conn = None
     res = []
     try:
-        params = config()
-        conn = psycopg2.connect(**params)
+        conn = config()
         cur = conn.cursor()
 
         desc_sql_query = "SELECT fre_score, avg_grade_score FROM description;"
@@ -478,8 +472,7 @@ def get_all_size_records():
     conn = None
     res = []
     try:
-        params = config()
-        conn = psycopg2.connect(**params)
+        conn = config()
         cur = conn.cursor()
 
         size_sql_query = "SELECT shoe_size, adult_shoe, youth_shoe, child_shoe FROM size;"
