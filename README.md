@@ -1,21 +1,27 @@
 # HypeBeastHelper
 
-## HOW TO VIRTUALENV
-Activating virtual environment:
-`source venv/bin/activate`
+# HypeBeastDashboard
 
-## HOW TO FLASK
-Flask Database Migration commands:
-1. `flask db init`
-2. `flask db migrate`
-3. `flask db upgrade`
+This is an analytics dashboard for eBay shoe resellers
 
-When database models change:
-1. `flask db migrate`
-2. `flask db upgrade`
+![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-1.png?raw=true)
+![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-2.png?raw=true)
+![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-3.png?raw=true)
 
-Refer this link for more info: https://realpython.com/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/
+## How to use
+`cd frontend`
 
+### Start backend
+`yarn start-backend`
+
+### Start frontend
+`yarn start-frontend`
+
+## Exploratory Data Analysis (EDA)
+Look at `backend/eda/eda.ipynb`
+
+## Training Classification and Regression Models
+Look at `backend/ml-work/*
 ## HOW TO POSTGRESQL CLI
 - `\du`: list of roles
 - `\l`: list of databases
