@@ -1,22 +1,32 @@
-# HypeBeastDashboard
+# HypeBeastHelper
 
-This is an analytics dashboard for eBay shoe resellers
+## HOW TO VIRTUALENV
+Activating virtual environment:
+`source venv/bin/activate`
 
-![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-1.png?raw=true)
-![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-2.png?raw=true)
-![Screenshot of the buyer dashboard](https://github.com/numankh/HypeBeastHelper/blob/main/dashboard-screenshot-3.png?raw=true)
+## HOW TO FLASK
+Flask Database Migration commands:
+1. `flask db init`
+2. `flask db migrate`
+3. `flask db upgrade`
 
-## How to use
-`cd frontend`
+When database models change:
+1. `flask db migrate`
+2. `flask db upgrade`
 
-### Start backend
-`yarn start-backend`
+Refer this link for more info: https://realpython.com/flask-by-example-part-2-postgres-sqlalchemy-and-alembic/
 
-### Start frontend
-`yarn start-frontend`
+## HOW TO POSTGRESQL CLI
+- `\du`: list of roles
+- `\l`: list of databases
+- `\c hypebeast`: connects with a database
+- `\dt`: list of relations
+- `\d shoes`: shows table schema
 
-## Exploratory Data Analysis (EDA)
-Look at `backend/eda/eda.ipynb`
-
-## Training Classification and Regression Models
-Look at `backend/ml-work/*
+## DATA SCIENCE RESOURCES 
+- https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
+- https://towardsdatascience.com/data-cleaning-how-to-handle-missing-values-in-pandas-cc8570c446ec
+- https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/
+- https://medium.com/@szabo.bibor/how-to-create-a-seaborn-correlation-heatmap-in-python-834c0686b88e
+- https://towardsdatascience.com/exploratory-data-analysis-8fc1cb20fd15
+- https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/

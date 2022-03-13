@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS #comment this on deployment
 import os
 import time
 import psycopg2
@@ -8,9 +9,7 @@ from herokuDB.config import config
 Basic app setup
 """
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+CORS(app) #comment this on deployment
 
 """
 Flask test routes
@@ -541,4 +540,4 @@ def delete_seller_record(seller_id):
     return jsonify(f"SUCCESS: Deleted SELLER record with seller_id <{seller_id}>")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=4000)
+    app.run(host='localhost', port=9874)

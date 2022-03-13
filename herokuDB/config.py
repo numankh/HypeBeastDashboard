@@ -2,7 +2,7 @@
 from configparser import ConfigParser
 
 
-def config(filename='/Users/numankhan/Documents/devlife/HypeBeastHelper/backend/herokuDB/database.ini', section='postgresql'):
+def config(filename='/Users/numankhan/Documents/devlife/HypeBeastHelper/herokuDB/database.ini', section='postgresql'):
     # create a parser
     parser = ConfigParser()
     # read config file
