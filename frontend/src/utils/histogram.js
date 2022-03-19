@@ -1,6 +1,6 @@
 
 import React from 'react';
-import '../../node_modules/react-vis/dist/style.css';
+// import '../../node_modules/react-vis/dist/style.css';
 import { Chart } from "react-google-charts";
 
 const formatData = (array) => {

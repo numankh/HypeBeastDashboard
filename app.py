@@ -1,35 +1,38 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS #comment this on deployment
 import os
-import time
 import psycopg2
 
 """
 Basic app setup
 """
-app = Flask(__name__, static_url_path='', static_folder='frontend/build')
-# CORS(app) #comment this on deployment
+app = Flask(__name__, static_folder='frontend/build')
 
-def config():
-    try:
-        conn = psycopg2.connect(
-            host=os.environ['HOST'],
-            database=os.environ['DATABASE'],
-            user=os.environ['USER'],
-            password=os.environ['PASSWORD'],
-            port=os.environ('PORT'))
-        return conn
-    except Exception as e:
-        print(str(e))
-        return None
-
-@app.route("/", defaults={'path':''})
+# Serve React App
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
 def serve(path):
-    return send_from_directory(app.static_folder,'index.html')
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 """
 Routes for PostgresQL database
 """
+
+def config():
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv("PSQL_HOST"),
+            database=os.getenv("PSQL_DATABASE"),
+            user=os.getenv("PSQL_USER"),
+            password=os.getenv("PSQL_PASSWORD"),
+            port=os.getenv("PSQL_PORT"))
+
+        return conn
+    except Exception as e:
+        print(str(e))
+        return None
 
 """
 CREATE APIs

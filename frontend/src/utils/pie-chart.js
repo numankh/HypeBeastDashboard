@@ -1,6 +1,6 @@
 
 import React from 'react';
-import '../../node_modules/react-vis/dist/style.css';
+// import '../../node_modules/react-vis/dist/style.css';
 import { Chart } from "react-google-charts";
 
 export default function PieChart(props) {

@@ -5,12 +5,12 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Container, Row, Col} from 'react-bootstrap';
 import Navbar from '../layout/Navbar';
-import PieChart from '../utils/pie-chart';
+// import PieChart from '../utils/pie-chart';
 import GoogleBarGraph from '../utils/google-bar-chart';
 import Histogram from '../utils/histogram';
-import Dropdown from 'react-bootstrap/Dropdown'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import ScatterChart from '../utils/scatter-trendline-chart';
+// import Dropdown from 'react-bootstrap/Dropdown'
+// import DropdownButton from 'react-bootstrap/DropdownButton'
+// import ScatterChart from '../utils/scatter-trendline-chart';
 import LineChart from '../utils/line-chart';
 
 class DataVizType {
@@ -85,8 +85,10 @@ export default function EbayShoeAnalytics() {
   const [followersBelow2000Data, setFollowersBelow2000Data] = React.useState([]);
   const [overallFeedbackData, setOverallFeedbackData] = React.useState([]);
 
+  const prefixHost = "http://127.0.0.1:5000/";
+
   React.useEffect(() => {
-    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkSizeData").then((response) => {
+    axios.get("/GetBulkSizeData").then((response) => {
       let shoeSize = [];
       let ageGroupStrings = [];
 
@@ -104,7 +106,7 @@ export default function EbayShoeAnalytics() {
       setAgeGroupData(ageGroupStrings);
     });
 
-    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkShoeListings").then((response) => {
+    axios.get("/GetBulkShoeListings").then((response) => {
       let price = []
       let free_shipping = []
       let images = []
@@ -119,7 +121,7 @@ export default function EbayShoeAnalytics() {
       setImagesData(images);
     });
 
-    axios.get("https://hypebeasthelper.herokuapp.com/GetBulkSellers").then((response) => {
+    axios.get("/GetBulkSellers").then((response) => {
       let recent_feedback = []
       let join_date = []
       let followers = []
@@ -147,7 +149,7 @@ export default function EbayShoeAnalytics() {
       setFollowersBelow2000Data(followers_below_2000);
     });
 
-    axios.get("https://hypebeasthelper.herokuapp.com/GetDescData").then((response) => {
+    axios.get("/GetDescData").then((response) => {
       let fre_score = []
       let avg_grade_score = []
 

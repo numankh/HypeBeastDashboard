@@ -1,6 +1,4 @@
-# HypeBeastHelper
-
-# HypeBeastDashboard
+# [HypeBeastHelper](https://hypebeasthelper.herokuapp.com/analytics)
 
 This is an analytics dashboard for eBay shoe resellers
 
