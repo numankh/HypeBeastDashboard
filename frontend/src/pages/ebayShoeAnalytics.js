@@ -13,60 +13,6 @@ import Histogram from '../utils/histogram';
 // import ScatterChart from '../utils/scatter-trendline-chart';
 import LineChart from '../utils/line-chart';
 
-class DataVizType {
-  static ALL = new DataVizType("all")
-  static SOLD = new DataVizType("sold")
-  static NOTSOLD = new DataVizType("notsold")
-
-  constructor(name) {
-    this.name = name
-  }
-}
-
-function getFrequency(arr) {
-  const res = {};
-  const dates = new Set();
-  for (const num of arr) {
-    const d = new Date(num);
-    const month = (d.getMonth()).toString();
-    const day = (d.getDate()).toString();
-    const key = month + "/" + day;
-    dates.add(key);
-    if (res[key]) {
-      res[key] = res[key] + 1;
-    } else {
-      res[key] = 1;
-    }
-  }
-
-  const myIterator = dates.values();
-  const finalDates = new Set();
-  let text = "";
-  for (const entry of myIterator) {
-    text += entry + ",";
-
-    let index = entry.indexOf('/');
-    let month = entry.substring(0,index);
-    let day = entry.substring(index+1);
-    finalDates.add(new Date(2021,month,day));
-  }
-
-  let output = [];
-  for (const entry of finalDates) {
-    output.push(entry);
-  }
-  output.sort((date1, date2) => date1 - date2);
-  
-  const res2 = [["Date","Frequency"]]
-  for (let key of output) {
-    let formattedKey = key.getMonth() + "/" + key.getDate();
-    let temp = [formattedKey, res[formattedKey]];
-    res2.push(temp);
-  }
-  return res2;
-}
-
-
 
 export default function EbayShoeAnalytics() {
   const [priceData, setPriceData] = React.useState([]);
@@ -84,8 +30,6 @@ export default function EbayShoeAnalytics() {
   const [followersData, setFollowersData] = React.useState([]);
   const [followersBelow2000Data, setFollowersBelow2000Data] = React.useState([]);
   const [overallFeedbackData, setOverallFeedbackData] = React.useState([]);
-
-  const prefixHost = "http://127.0.0.1:5000/";
 
   React.useEffect(() => {
     axios.get("/GetBulkSizeData").then((response) => {
@@ -268,69 +212,6 @@ export default function EbayShoeAnalytics() {
 
         
       </Container>
-
-      {/* <p>{sellerData[0].username}</p>
-      <p>{shoeListingData[0].images}</p> */}
-
-
-
-      {/* <DropdownButton id="dropdown-basic-button" title="Shoe Filter" style={{marginLeft: "auto", marginRight:"auto"}}>
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.ALL)}>All Shoes</Dropdown.Item>
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.NOTSOLD)}>Not sold Shoes</Dropdown.Item>
-        <Dropdown.Item onClick={() => setDataVizType(DataVizType.SOLD)}>Sold Shoes</Dropdown.Item>
-      </DropdownButton> */}
-{/* 
-      <Container>
-        <Row>
-          <Col>
-            <GoogleBarGraph value={totalImages}
-                            title={"Total Seller Provided Item Images"}
-                            xaxis={"Total Images"}
-                            yaxis={"Frequency"}
-                            width={'400px'}
-                            height={'500px'}/>
-          </Col>
-          <Col>
-            <GoogleBarGraph value={shoeSizes}
-                            title={"Distribution of Adult Shoe Size"}
-                            xaxis={"Adult Shoe Size"}
-                            yaxis={"Frequency"}
-                            width={'800px'}
-                            height={'500px'}/>
-          </Col>
-
-        </Row>
-        <Row>
-          <Col>
-            <Histogram value={shoePrices}
-                       title={"Shoe Prices"}
-                       width={"800px"}
-                       height={"500px"}/>
-          </Col>
-          <Col>
-            <Histogram value={sellerRatings}
-                       title={"Seller Ratings"}
-                       width={"800px"}
-                       height={"500px"}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Histogram value={freScores}
-                       title={"Flesch Reading Ease Scores for Shoe Descriptions (complex descriptions have low scores)"}
-                       width={"800px"}
-                       height={"500px"}/>
-          </Col>
-          <Col>
-            <Histogram value={gradeScores}
-                       title={"Average Grade Readability Scores for Shoe Descriptions (complex descriptions have high scores)"}
-                       width={"800px"}
-                       height={"500px"}/>
-          </Col>
-        </Row>
-      </Container> */}
-
-      {/* <ul>{listItems}</ul> */}
     </div>
   );
 }
