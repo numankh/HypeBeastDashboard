@@ -1,6 +1,6 @@
-# [HypeBeastHelper](http://hypebeasthelper.herokuapp.com/analytics)
+# [HypeBeastHelper](http://hypebeasthelper.herokuapp.com)
 
-This is an analytics dashboard for eBay shoe resellers: http://hypebeasthelper.herokuapp.com/analytics
+This is an analytics dashboard for eBay shoe resellers: http://hypebeasthelper.herokuapp.com
 
 ## Exploratory Data Analysis (EDA)
 Look at `eda/eda.ipynb`
